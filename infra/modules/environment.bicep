@@ -8,6 +8,8 @@ param customHostname string
 param deployerObjectId string
 param alertEmail string
 param emailSenderAddress string
+param emailCustomDomain string = ''
+param customDomains array = []
 param identityName string
 
 @secure()
@@ -186,13 +188,24 @@ resource managedEmailDomain 'Microsoft.Communication/emailServices/domains@2023-
   }
 }
 
+resource customEmailDomain 'Microsoft.Communication/emailServices/domains@2023-04-01' = if (isProd && !empty(emailCustomDomain)) {
+  parent: emailService
+  name: empty(emailCustomDomain) ? 'unused' : emailCustomDomain
+  location: 'global'
+  tags: tags
+  properties: {
+    domainManagement: 'CustomerManaged'
+    userEngagementTracking: 'Disabled'
+  }
+}
+
 resource communication 'Microsoft.Communication/communicationServices@2023-04-01' = if (isProd) {
   name: '${prefix}-acs-${suffix}'
   location: 'global'
   tags: tags
   properties: {
     dataLocation: 'Europe'
-    linkedDomains: [managedEmailDomain.id]
+    linkedDomains: empty(emailCustomDomain) ? [managedEmailDomain.id] : [managedEmailDomain.id, customEmailDomain.id]
   }
 }
 
@@ -302,6 +315,11 @@ resource app 'Microsoft.App/containerApps@2024-03-01' = {
         targetPort: 8080
         transport: 'http'
         allowInsecure: false
+        customDomains: [for domain in customDomains: {
+          name: domain.hostname
+          certificateId: resourceId('Microsoft.App/managedEnvironments/managedCertificates', environment.name, domain.certificateName)
+          bindingType: 'SniEnabled'
+        }]
       }
       registries: [{ server: registryLoginServer, identity: identity.id }]
       secrets: [

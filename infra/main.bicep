@@ -28,6 +28,12 @@ param prodCustomHostname string = ''
 @description('Sender address of the production email domain; empty uses the Azure managed domain.')
 param prodEmailSenderAddress string = ''
 
+@description('Verified customer-managed email domain linked to Communication Services, e.g. ksmconnect.pl.')
+param prodEmailCustomDomain string = ''
+
+@description('Custom hostnames bound to the PROD app with their managed certificate names: [{ hostname, certificateName }].')
+param prodCustomDomains array = []
+
 @secure()
 param testPostgresPassword string = ''
 @secure()
@@ -138,6 +144,8 @@ module prod 'modules/environment.bicep' = if (deployEnvironments) {
     tokenPepper: prodTokenPepper
     mailpitPassword: ''
     emailSenderAddress: prodEmailSenderAddress
+    emailCustomDomain: prodEmailCustomDomain
+    customDomains: prodCustomDomains
     identityName: prodIdentity!.outputs.name
   }
   dependsOn: [registryAccess]
