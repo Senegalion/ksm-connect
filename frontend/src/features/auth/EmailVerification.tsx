@@ -1,5 +1,4 @@
 import { useMutation } from '@tanstack/react-query'
-import { CircleCheck, CircleX } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router'
 import { ButtonLink } from '../../components/ui/Button'
@@ -24,8 +23,7 @@ export function EmailVerification() {
 
   if (!token || verify.isError) {
     return (
-      <div className="space-y-4 text-center">
-        <CircleX className="mx-auto size-12 text-danger-700" aria-hidden />
+      <div className="space-y-4">
         <p className="text-ink-700">{token ? errorMessage(verify.error) : 'Link jest niekompletny. Otwórz go ponownie z wiadomości e-mail.'}</p>
         <ButtonLink to="/login" variant="secondary" fullWidth>Przejdź do logowania</ButtonLink>
       </div>
@@ -35,8 +33,7 @@ export function EmailVerification() {
     return <PageLoader label="Potwierdzamy adres e-mail…" />
   }
   return (
-    <div className="space-y-4 text-center">
-      <CircleCheck className="mx-auto size-12 text-pine-700" aria-hidden />
+    <div className="space-y-4 border-t-2 border-success-700 pt-5">
       <p className="text-lg font-semibold">Adres e-mail potwierdzony!</p>
       <p className="text-sm text-ink-500">Możesz się teraz zalogować i dołączyć do wydarzenia.</p>
       <ButtonLink to="/login" fullWidth size="lg">Zaloguj się</ButtonLink>

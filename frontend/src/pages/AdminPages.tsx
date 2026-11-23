@@ -1,5 +1,4 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { ArrowLeft, CalendarPlus, Settings2 } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
 import { Alert } from '../components/ui/Alert'
@@ -28,14 +27,14 @@ export function AdminEventsPage() {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="space-y-1">
           <p className="text-sm text-ink-500">Panel organizatora</p>
-          <h1 className="text-3xl font-semibold">Wydarzenia</h1>
+          <h1 className="text-3xl leading-tight">Wydarzenia</h1>
         </div>
-        <ButtonLink to="/admin/events/new" icon={<CalendarPlus className="size-4" aria-hidden />}>Nowe wydarzenie</ButtonLink>
+        <ButtonLink to="/admin/events/new">Nowe wydarzenie</ButtonLink>
       </div>
       {events.isPending ? <PageLoader /> : events.isError ? <Alert tone="error">{errorMessage(events.error)}</Alert> : events.data.length === 0 ? (
-        <EmptyState icon={<Settings2 className="size-6" aria-hidden />} title="Brak wydarzeń" description="Utwórz pierwsze wydarzenie, np. Wigilię KSM." action={<ButtonLink to="/admin/events/new">Utwórz wydarzenie</ButtonLink>} />
+        <EmptyState title="Brak wydarzeń" description="Utwórz pierwsze wydarzenie, np. Wigilię KSM." action={<ButtonLink to="/admin/events/new">Utwórz wydarzenie</ButtonLink>} />
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
           {events.data.map((event) => <AdminEventCard key={event.id} event={event} />)}
         </div>
       )}
@@ -56,7 +55,7 @@ export function AdminCreateEventPage() {
   return (
     <div className="mx-auto max-w-3xl space-y-6">
       <BackLink to="/admin" label="Wydarzenia" />
-      <h1 className="text-3xl font-semibold">Nowe wydarzenie</h1>
+      <h1 className="text-3xl leading-tight">Nowe wydarzenie</h1>
       <Card>
         <CardBody>
           <EventForm initialValues={emptyEventForm} submitLabel="Utwórz wydarzenie" submitting={create.isPending} error={create.error} onSubmit={(values) => create.mutate(toRequest(values))} />
@@ -96,8 +95,8 @@ export function AdminEventPage() {
   return (
     <div className="space-y-6">
       <BackLink to="/admin" label="Wydarzenia" />
-      <h1 className="text-3xl leading-tight font-semibold">{data.name}</h1>
-      <div role="tablist" aria-label="Sekcje wydarzenia" className="-mx-4 flex gap-1 overflow-x-auto px-4 pb-1">
+      <h1 className="text-3xl leading-tight">{data.name}</h1>
+      <div role="tablist" aria-label="Sekcje wydarzenia" className="-mx-4 flex gap-6 overflow-x-auto border-b border-line px-4 md:mx-0 md:px-0">
         {TABS.map(({ id, label }) => (
           <button
             key={id}
@@ -105,7 +104,7 @@ export function AdminEventPage() {
             type="button"
             aria-selected={tab === id}
             onClick={() => setTab(id)}
-            className={cn('min-h-10 shrink-0 rounded-xl px-4 text-sm font-semibold transition', tab === id ? 'bg-ink-900 text-white' : 'bg-white text-ink-700 hover:bg-cream-200')}
+            className={cn('min-h-11 shrink-0 border-b-2 text-[15px] transition-colors', tab === id ? 'border-ink-900 font-medium text-ink-900' : 'border-transparent text-ink-500 hover:text-ink-900')}
           >
             {label}
           </button>
@@ -146,8 +145,8 @@ export function AdminEventPage() {
 
 function BackLink({ to, label }: { to: string; label: string }) {
   return (
-    <Link to={to} className="inline-flex items-center gap-1.5 text-sm font-semibold text-ink-500 hover:text-wine-700">
-      <ArrowLeft className="size-4" aria-hidden />{label}
+    <Link to={to} className="inline-flex min-h-10 items-center gap-1.5 text-sm text-ink-500 hover:text-ink-900">
+      ← {label}
     </Link>
   )
 }

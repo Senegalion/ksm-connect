@@ -5,33 +5,33 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Twoje losowanie na Wigilię KSM</title>
 </head>
-<body style="margin:0;padding:0;background:#f6f1ea;font-family:Helvetica,Arial,sans-serif;color:#2b2420;">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f6f1ea;padding:24px 12px;">
+<body style="margin:0;padding:0;background:#f4f4f4;font-family:Helvetica,Arial,sans-serif;color:#141414;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:24px 12px;">
 <tr><td align="center">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border-radius:16px;overflow:hidden;">
-<tr><td style="background:#7a1f2b;padding:20px 28px;color:#fdf6ec;font-size:18px;font-weight:bold;letter-spacing:0.3px;">KSM Connect</td></tr>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;overflow:hidden;">
+<tr><td style="padding:20px 28px;border-bottom:1px solid #e2e2e0;font-size:16px;font-weight:bold;"><span style="background:#b3141c;color:#ffffff;padding:3px 6px;">KSM</span> Connect</td></tr>
 <tr><td style="padding:28px;font-size:16px;line-height:1.6;">
 <p style="margin-top:0;">Cześć <span th:text="${giverFirstName}"></span>!</p>
 <p>Losowanie na Wigilię KSM dobiegło końca! 🎄</p>
 <p>Mamy dla Ciebie dobrą wiadomość – osoba, dla której przygotujesz świąteczny prezent, to:</p>
-<p style="margin:24px 0;padding:18px 20px;background:#fbf3e4;border-radius:12px;font-size:22px;font-weight:bold;color:#7a1f2b;text-align:center;">🎁 <span th:text="${recipientFullName}"></span></p>
+<p style="margin:24px 0;padding:18px 20px;border-top:3px solid #b3141c;border-bottom:1px solid #e2e2e0;font-size:22px;font-weight:bold;color:#141414;text-align:left;">🎁 <span th:text="${recipientFullName}"></span></p>
 <p>Chcesz sprawdzić, jakie prezenty sprawiłyby jej szczególną radość?</p>
 <p>Zaloguj się do KSM Connect, aby zobaczyć jej listę prezentów:</p>
-<table role="presentation" cellpadding="0" cellspacing="0" style="margin:24px 0;"><tr><td style="border-radius:10px;background:#7a1f2b;">
+<table role="presentation" cellpadding="0" cellspacing="0" style="margin:24px 0;"><tr><td style="border-radius:4px;background:#141414;">
 <a th:href="${assignmentUrl}" style="display:inline-block;padding:14px 24px;color:#ffffff;text-decoration:none;font-weight:bold;font-size:15px;">ZOBACZ SWOJĄ OSOBĘ I LISTĘ PREZENTÓW</a>
 </td></tr></table>
 <p>Pamiętaj, że propozycje z listy są jedynie inspiracją – najważniejsza jest pamięć i radość z obdarowywania! ❤️</p>
 <p>Życzymy Ci udanych przygotowań, kreatywnego pomysłu na prezent i pięknej Wigilii KSM!</p>
 <p style="margin-bottom:0;">Pozdrawiamy,<br>Zespół KSM Connect</p>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:24px;border-top:1px solid #efe6da;" th:if="${eventDate != null or eventLocation != null}">
-<tr><td style="padding-top:16px;font-size:14px;color:#5e534b;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:24px;border-top:1px solid #e2e2e0;" th:if="${eventDate != null or eventLocation != null}">
+<tr><td style="padding-top:16px;font-size:14px;color:#3b3b3b;">
 <strong th:text="${eventName}"></strong><br>
 <span th:if="${eventDate != null}" th:text="${eventDate}"></span><br th:if="${eventDate != null}">
 <span th:if="${eventLocation != null}" th:text="${eventLocation}"></span>
 </td></tr>
 </table>
 </td></tr>
-<tr><td style="padding:18px 28px;background:#fbf8f3;color:#7b6f66;font-size:12px;line-height:1.5;">Ta wiadomość jest przeznaczona wyłącznie dla Ciebie – nie przekazuj jej innym uczestnikom, żeby zachować niespodziankę.</td></tr>
+<tr><td style="padding:18px 28px;background:#f4f4f4;color:#646464;font-size:12px;line-height:1.5;">Ta wiadomość jest przeznaczona wyłącznie dla Ciebie – nie przekazuj jej innym uczestnikom, żeby zachować niespodziankę.</td></tr>
 </table>
 </td></tr>
 </table>

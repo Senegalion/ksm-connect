@@ -1,5 +1,4 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { CalendarClock, CheckCircle2, Shuffle } from 'lucide-react'
 import { useState } from 'react'
 import { Alert } from '../../components/ui/Alert'
 import { Button } from '../../components/ui/Button'
@@ -27,7 +26,7 @@ export function DrawPanel({ event }: { event: AdminEventView }) {
     <Card>
       <CardBody className="space-y-4">
         <div className="flex items-center gap-2">
-          <Shuffle className="size-5 text-wine-700" aria-hidden />
+          
           <h2 className="text-xl font-semibold">Losowanie</h2>
         </div>
 
@@ -39,7 +38,7 @@ export function DrawPanel({ event }: { event: AdminEventView }) {
           <>
             {event.drawMode === 'SCHEDULED' && event.drawAt && (
               <p className="flex items-start gap-2 text-sm text-ink-700">
-                <CalendarClock className="mt-0.5 size-4 shrink-0 text-wine-700" aria-hidden />
+                
                 Automatyczne losowanie: {formatDateTime(event.drawAt, event.timezone)}. Zapisy zamkną się wtedy same.
               </p>
             )}
@@ -52,7 +51,6 @@ export function DrawPanel({ event }: { event: AdminEventView }) {
             {draw.isError && <Alert tone="error">{errorMessage(draw.error)}</Alert>}
             <Button
               size="lg"
-              icon={<Shuffle className="size-5" aria-hidden />}
               disabled={event.status !== 'REGISTRATION_CLOSED' || event.activeParticipants < 2}
               onClick={() => setConfirmOpen(true)}
             >
@@ -62,8 +60,8 @@ export function DrawPanel({ event }: { event: AdminEventView }) {
         )}
 
         {draw.isSuccess && (
-          <p className="flex items-center gap-2 text-sm font-semibold text-pine-700">
-            <CheckCircle2 className="size-4" aria-hidden />Wylosowano pary dla {draw.data.participantCount} osób. Powiadomienia są w drodze.
+          <p className="flex items-center gap-2 text-sm font-semibold text-success-700">
+            Wylosowano pary dla {draw.data.participantCount} osób. Powiadomienia są w drodze.
           </p>
         )}
       </CardBody>

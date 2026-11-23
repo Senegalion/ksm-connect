@@ -1,5 +1,4 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { BellRing, Mail, MessageSquareText, RotateCcw } from 'lucide-react'
 import { Alert } from '../../components/ui/Alert'
 import { Badge } from '../../components/ui/Badge'
 import { Button } from '../../components/ui/Button'
@@ -29,7 +28,7 @@ export function NotificationsPanel({ event }: { event: AdminEventView }) {
   if (notifications.isPending) return <PageLoader />
   if (notifications.isError) return <Alert tone="error">{errorMessage(notifications.error)}</Alert>
   if (notifications.data.length === 0) {
-    return <EmptyState icon={<BellRing className="size-6" aria-hidden />} title="Brak powiadomień" description="Powiadomienia pojawią się tutaj po losowaniu." />
+    return <EmptyState title="Brak powiadomień" description="Powiadomienia pojawią się tutaj po losowaniu." />
   }
   const failed = notifications.data.filter((entry) => entry.status === 'FAILED').length
 
@@ -38,20 +37,22 @@ export function NotificationsPanel({ event }: { event: AdminEventView }) {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-ink-500">Wiadomości nie zawierają wyników innych osób. Ponowienie wysyłki nie zmienia losowania.</p>
         {failed > 0 && (
-          <Button variant="secondary" size="sm" icon={<RotateCcw className="size-4" aria-hidden />} loading={retryAll.isPending} onClick={() => retryAll.mutate()}>
+          <Button variant="secondary" size="sm" loading={retryAll.isPending} onClick={() => retryAll.mutate()}>
             Ponów nieudane ({failed})
           </Button>
         )}
       </div>
       {(retryOne.isError || retryAll.isError) && <Alert tone="error">{errorMessage(retryOne.error ?? retryAll.error)}</Alert>}
-      <ul className="space-y-2">
+      <ul className="divide-y divide-line border-y border-line">
         {notifications.data.map((entry) => (
-          <li key={entry.id} className="flex flex-col gap-2 rounded-2xl border border-cream-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-start gap-3">
-              {entry.channel === 'EMAIL' ? <Mail className="mt-0.5 size-4 text-ink-300" aria-label="E-mail" /> : <MessageSquareText className="mt-0.5 size-4 text-ink-300" aria-label="SMS" />}
+          <li key={entry.id} className="flex flex-col gap-2 py-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
               <div>
-                <p className="font-semibold">{entry.participantName ?? 'Uczestnik'}</p>
-                <p className="text-xs text-ink-500">
+                <p className="font-medium">
+                  {entry.participantName ?? 'Uczestnik'}
+                  <span className="ml-2 font-mono text-xs text-ink-500">{entry.channel === 'EMAIL' ? 'E-MAIL' : 'SMS'}</span>
+                </p>
+                <p className="text-[13px] text-ink-500">
                   Próby: {entry.attemptCount}/{entry.maxAttempts}
                   {entry.sentAt && <> · wysłano {formatDateTime(entry.sentAt, event.timezone)}</>}
                   {entry.status === 'RETRY_PENDING' && <> · kolejna próba {formatDateTime(entry.nextAttemptAt, event.timezone)}</>}

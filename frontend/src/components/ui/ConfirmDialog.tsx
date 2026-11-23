@@ -39,7 +39,7 @@ export function ConfirmDialog({ open, title, children, confirmLabel, cancelLabel
           event.preventDefault()
         }
       }}
-      className="m-auto w-[min(100%-2rem,28rem)] rounded-3xl border border-cream-200 bg-white p-0 text-ink-900 shadow-2xl backdrop:bg-ink-900/40 backdrop:backdrop-blur-[2px]"
+      className="m-auto w-[min(100%-2rem,28rem)] rounded-md border border-line bg-paper p-0 text-ink-900 backdrop:bg-ink-900/50"
     >
       <div className="space-y-4 p-6">
         <h2 id={titleId} className="text-xl font-semibold">{title}</h2>

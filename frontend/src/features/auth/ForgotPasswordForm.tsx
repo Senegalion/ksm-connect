@@ -19,7 +19,7 @@ export function ForgotPasswordForm() {
         <Alert tone="success" title="Sprawdź skrzynkę">
           Jeśli konto o tym adresie istnieje, wysłaliśmy link do ustawienia nowego hasła. Link jest ważny przez godzinę.
         </Alert>
-        <Link to="/login" className="block text-center text-sm font-semibold text-wine-700">Wróć do logowania</Link>
+        <Link to="/login" className="block text-center text-sm font-medium text-accent-700 hover:underline">Wróć do logowania</Link>
       </div>
     )
   }
@@ -29,7 +29,7 @@ export function ForgotPasswordForm() {
       {request.isError && <Alert tone="error">{errorMessage(request.error)}</Alert>}
       <TextField label="E-mail" type="email" inputMode="email" autoComplete="email" autoCapitalize="none" error={form.formState.errors.email?.message} {...form.register('email')} />
       <Button type="submit" fullWidth size="lg" loading={request.isPending}>Wyślij link</Button>
-      <Link to="/login" className="block text-center text-sm font-semibold text-wine-700">Wróć do logowania</Link>
+      <Link to="/login" className="block text-center text-sm font-medium text-accent-700 hover:underline">Wróć do logowania</Link>
     </form>
   )
 }

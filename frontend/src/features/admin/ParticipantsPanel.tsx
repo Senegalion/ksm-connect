@@ -1,9 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Mail, Phone, UserMinus, Users } from 'lucide-react'
 import { useState } from 'react'
 import { Alert } from '../../components/ui/Alert'
-import { Badge } from '../../components/ui/Badge'
-import { Button } from '../../components/ui/Button'
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog'
 import { EmptyState } from '../../components/ui/EmptyState'
 import { PageLoader } from '../../components/ui/Spinner'
@@ -34,25 +31,26 @@ export function ParticipantsPanel({ event }: { event: AdminEventView }) {
   const withdrawn = participants.data.filter((participant) => participant.status === 'WITHDRAWN')
 
   if (participants.data.length === 0) {
-    return <EmptyState icon={<Users className="size-6" aria-hidden />} title="Nikt jeszcze nie dołączył" description="Udostępnij kod zaproszenia lub QR, aby uczestnicy mogli się zapisać." />
+    return <EmptyState title="Nikt jeszcze nie dołączył" description="Udostępnij kod zaproszenia lub QR, aby uczestnicy mogli się zapisać." />
   }
 
   return (
     <div className="space-y-4">
       <p className="text-sm text-ink-500">Aktywni uczestnicy: <strong className="text-ink-900">{active.length}</strong>{withdrawn.length > 0 && <> · zrezygnowali: {withdrawn.length}</>}</p>
       {remove.isError && <Alert tone="error">{errorMessage(remove.error)}</Alert>}
-      <ul className="grid gap-3 sm:grid-cols-2">
+      <ul className="divide-y divide-line border-y border-line">
         {[...active, ...withdrawn].map((participant) => (
-          <li key={participant.participantId} className="space-y-2 rounded-2xl border border-cream-200 bg-white p-4">
-            <div className="flex items-start justify-between gap-2">
-              <p className="font-semibold">{participant.firstName} {participant.lastName}</p>
-              {participant.status === 'WITHDRAWN' && <Badge tone="neutral">Zrezygnował(-a)</Badge>}
+          <li key={participant.participantId} className="grid gap-1 py-3 sm:grid-cols-[1fr_auto] sm:items-center sm:gap-4">
+            <div className="min-w-0">
+              <p className={participant.status === 'WITHDRAWN' ? 'text-ink-500 line-through' : 'font-medium'}>
+                {participant.firstName} {participant.lastName}
+                {participant.status === 'WITHDRAWN' && <span className="ml-2 text-[13px] text-ink-500 no-underline">zrezygnował(-a)</span>}
+              </p>
+              <p className="text-sm break-all text-ink-700">{participant.email}{participant.phoneNumber && <> · {participant.phoneNumber}</>}</p>
+              <p className="text-[13px] text-ink-500">Dołączył(-a) {formatDateTime(participant.joinedAt, event.timezone)}</p>
             </div>
-            <p className="flex items-center gap-2 text-sm text-ink-700 break-all"><Mail className="size-4 shrink-0 text-ink-300" aria-hidden />{participant.email}</p>
-            {participant.phoneNumber && <p className="flex items-center gap-2 text-sm text-ink-700"><Phone className="size-4 shrink-0 text-ink-300" aria-hidden />{participant.phoneNumber}</p>}
-            <p className="text-xs text-ink-500">Dołączył(-a): {formatDateTime(participant.joinedAt, event.timezone)}</p>
             {removable && participant.status === 'ACTIVE' && (
-              <Button size="sm" variant="ghost" icon={<UserMinus className="size-4" aria-hidden />} onClick={() => setToRemove(participant)}>Usuń z wydarzenia</Button>
+              <button type="button" className="min-h-10 justify-self-start text-sm text-danger-700 hover:underline" onClick={() => setToRemove(participant)}>Usuń z wydarzenia</button>
             )}
           </li>
         ))}

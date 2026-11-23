@@ -1,5 +1,4 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { Camera, PartyPopper, Ticket } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router'
 import { TextField } from '../../components/forms/TextField'
@@ -51,9 +50,8 @@ export function JoinEventFlow() {
   if (!user) {
     return (
       <Card>
-        <CardBody className="space-y-4 text-center">
-          <Ticket className="mx-auto size-10 text-wine-700" aria-hidden />
-          <h2 className="text-xl font-semibold">Masz zaproszenie!</h2>
+        <CardBody className="space-y-4">
+          <h2 className="text-xl">Masz zaproszenie!</h2>
           <p className="text-sm leading-relaxed text-ink-500">Zaloguj się albo załóż konto – po zalogowaniu wrócisz tutaj, a kod zaproszenia zostanie wpisany automatycznie.</p>
           <div className="grid gap-2 sm:grid-cols-2">
             <Button size="lg" onClick={() => { if (code) rememberPendingInvitation(code); navigate('/login') }}>Zaloguj się</Button>
@@ -67,10 +65,9 @@ export function JoinEventFlow() {
   if (accept.isSuccess) {
     const { event, newlyJoined } = accept.data
     return (
-      <Card className="animate-reveal">
-        <CardBody className="space-y-4 text-center">
-          <PartyPopper className="mx-auto size-12 text-gold-500" aria-hidden />
-          <h2 className="text-2xl font-semibold">{newlyJoined ? 'Jesteś zapisany(-a)!' : 'Już jesteś na liście'}</h2>
+      <Card className="border-t-4 border-t-success-700">
+        <CardBody className="space-y-4">
+          <h2 className="text-2xl">{newlyJoined ? 'Jesteś zapisany(-a)!' : 'Już jesteś na liście'}</h2>
           <p className="text-sm leading-relaxed text-ink-500">Dołączyłeś(-aś) do wydarzenia <strong className="text-ink-900">{event.name}</strong>. Teraz dodaj swoją listę prezentów, żeby Twój Mikołaj wiedział, co sprawi Ci radość.</p>
           <ButtonLink to={`/events/${event.id}`} size="lg" fullWidth>Uzupełnij listę prezentów</ButtonLink>
         </CardBody>
@@ -102,7 +99,7 @@ export function JoinEventFlow() {
               autoComplete="off"
               spellCheck={false}
               className="font-mono tracking-wider uppercase"
-              hint={<span className="inline-flex items-center gap-1.5"><Camera className="size-3.5" aria-hidden />Masz kod QR? Zeskanuj go aparatem w telefonie – otworzy się ta strona z wpisanym kodem.</span>}
+              hint="Masz kod QR? Zeskanuj go aparatem w telefonie – otworzy się ta strona z wpisanym kodem."
             />
             {preview.isError && <Alert tone="error">{errorMessage(preview.error)}</Alert>}
             <Button type="submit" variant="secondary" fullWidth loading={preview.isPending} disabled={!code.trim()}>Sprawdź kod</Button>
@@ -111,11 +108,11 @@ export function JoinEventFlow() {
       </Card>
 
       {event && (
-        <Card className="animate-rise">
+        <Card className="">
           <CardBody className="space-y-4">
             <div className="space-y-1">
-              <p className="text-xs font-semibold tracking-wide text-ink-500 uppercase">Zaproszenie do wydarzenia</p>
-              <h2 className="text-2xl font-semibold">{event.name}</h2>
+              <p className="text-[13px] font-medium tracking-wide text-ink-500 uppercase">Zaproszenie do wydarzenia</p>
+              <h2 className="text-2xl">{event.name}</h2>
             </div>
             {event.description && <p className="text-sm leading-relaxed whitespace-pre-line text-ink-700">{event.description}</p>}
             <EventMeta event={event} />

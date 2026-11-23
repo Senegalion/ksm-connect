@@ -11,13 +11,13 @@ export function CheckboxField({ label, error, id, ref, ...rest }: CheckboxFieldP
   const fieldId = id ?? generatedId
   return (
     <div className="space-y-1">
-      <label htmlFor={fieldId} className="flex cursor-pointer items-start gap-3 rounded-xl p-1 text-sm leading-relaxed text-ink-700">
+      <label htmlFor={fieldId} className="flex cursor-pointer items-start gap-3 rounded-md p-1 text-sm leading-relaxed text-ink-700">
         <input
           ref={ref}
           id={fieldId}
           type="checkbox"
           aria-invalid={error ? true : undefined}
-          className="mt-0.5 size-5 shrink-0 accent-wine-700"
+          className="mt-0.5 size-5 shrink-0 accent-ink-900"
           {...rest}
         />
         <span>{label}</span>

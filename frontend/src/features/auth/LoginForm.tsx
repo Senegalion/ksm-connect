@@ -53,14 +53,14 @@ export function LoginForm() {
         {...form.register('password')}
       />
       <div className="flex justify-end">
-        <Link to="/forgot-password" className="text-sm font-semibold text-wine-700 underline-offset-4 hover:underline">
+        <Link to="/forgot-password" className="text-sm font-medium text-accent-700 hover:underline underline-offset-4 hover:underline">
           Nie pamiętam hasła
         </Link>
       </div>
       <Button type="submit" fullWidth size="lg" loading={login.isPending}>Zaloguj się</Button>
       <p className="text-center text-sm text-ink-500">
         Nie masz konta?{' '}
-        <Link to={registerLink} className="font-semibold text-wine-700 underline-offset-4 hover:underline">
+        <Link to={registerLink} className="font-medium text-accent-700 underline-offset-4 hover:underline">
           Załóż konto
         </Link>
       </p>

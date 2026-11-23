@@ -1,5 +1,4 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { Copy, Download, QrCode, RefreshCw } from 'lucide-react'
 import QRCode from 'qrcode'
 import { useState } from 'react'
 import { Alert } from '../../components/ui/Alert'
@@ -50,27 +49,27 @@ export function InvitationPanel({ event }: { event: AdminEventView }) {
     <Card>
       <CardBody className="space-y-4">
         <div className="flex items-center gap-2">
-          <QrCode className="size-5 text-wine-700" aria-hidden />
+          
           <h2 className="text-xl font-semibold">Zaproszenie</h2>
         </div>
 
         {generated ? (
-          <div className="animate-rise space-y-4">
+          <div className=" space-y-4">
             <Alert tone="info" title="Zapisz kod teraz">Ze względów bezpieczeństwa kod i QR są pokazywane tylko raz. Jeśli je zgubisz, wygeneruj nowe – stary kod przestanie działać.</Alert>
             <div className="grid items-center gap-4 sm:grid-cols-[auto_1fr]">
-              {qrDataUrl && <img src={qrDataUrl} alt="Kod QR z linkiem do zapisów" className="mx-auto size-48 rounded-2xl border border-cream-200 bg-white p-2 sm:size-44" />}
+              {qrDataUrl && <img src={qrDataUrl} alt="Kod QR z linkiem do zapisów" className="mx-auto size-48 rounded-md border border-line bg-paper p-2 sm:size-44" />}
               <div className="space-y-3">
                 <p className="font-mono text-2xl font-semibold tracking-wider text-ink-900 break-all" data-testid="invitation-code">{generated.code}</p>
                 <div className="grid gap-2 sm:flex sm:flex-wrap">
-                  <Button variant="secondary" size="sm" icon={<Copy className="size-4" aria-hidden />} onClick={() => copy(generated.code, 'code')}>
+                  <Button variant="secondary" size="sm" onClick={() => copy(generated.code, 'code')}>
                     {copied === 'code' ? 'Skopiowano' : 'Kopiuj kod'}
                   </Button>
-                  <Button variant="secondary" size="sm" icon={<Copy className="size-4" aria-hidden />} onClick={() => copy(generated.joinUrl, 'link')}>
+                  <Button variant="secondary" size="sm" onClick={() => copy(generated.joinUrl, 'link')}>
                     {copied === 'link' ? 'Skopiowano' : 'Kopiuj link'}
                   </Button>
                   {qrDataUrl && (
-                    <a href={qrDataUrl} download={`zaproszenie-${event.name.replace(/[^\p{L}\p{N}]+/gu, '-').toLowerCase()}.png`} className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-xl border border-cream-300 bg-white px-3.5 text-sm font-semibold hover:bg-cream-50">
-                      <Download className="size-4" aria-hidden />Pobierz QR
+                    <a href={qrDataUrl} download={`zaproszenie-${event.name.replace(/[^\p{L}\p{N}]+/gu, '-').toLowerCase()}.png`} className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-md border border-line-strong bg-paper px-3.5 text-sm font-semibold hover:bg-muted">
+                      Pobierz QR
                     </a>
                   )}
                 </div>
@@ -91,7 +90,6 @@ export function InvitationPanel({ event }: { event: AdminEventView }) {
         {canIssue && (
           <Button
             variant={generated ? 'ghost' : 'primary'}
-            icon={<RefreshCw className="size-4" aria-hidden />}
             loading={regenerate.isPending && !confirmOpen}
             onClick={() => (event.invitation.exists || generated ? setConfirmOpen(true) : regenerate.mutate())}
           >

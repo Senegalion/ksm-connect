@@ -1,6 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { Link2, PenLine, Plus, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { TextAreaField, TextField } from '../../components/forms/TextField'
@@ -36,20 +35,17 @@ export function SuggestionCard({ eventId, position, item, editable }: Suggestion
   return (
     <article
       aria-label={title}
-      className={cn(
-        'flex flex-col gap-3 rounded-[var(--radius-card)] border p-4 transition sm:p-5',
-        item ? 'border-cream-200 bg-white shadow-[var(--shadow-card)]' : 'border-dashed border-cream-300 bg-cream-50/60',
-      )}
+      className={cn('flex flex-col gap-3 border-t-2 pt-4', item ? 'border-ink-900' : 'border-line')}
     >
-      <header className="flex items-center justify-between gap-2">
-        <h3 className="flex items-center gap-2 font-display text-lg font-semibold">
-          <span className={cn('flex size-7 items-center justify-center rounded-full text-sm font-sans', item ? 'bg-wine-700 text-white' : 'bg-cream-200 text-ink-500')}>{position}</span>
+      <header className="flex items-baseline justify-between gap-2">
+        <h3 className="flex items-baseline gap-2 text-base">
+          <span className="font-mono text-sm text-ink-500">{String(position).padStart(2, '0')}</span>
           {title}
         </h3>
         {item && editable && !editingType && (
-          <div className="flex gap-1">
-            <Button size="sm" variant="ghost" onClick={() => setEditingType(item.type)} aria-label={`Edytuj ${title}`}>Edytuj</Button>
-            <Button size="sm" variant="ghost" onClick={() => remove.mutate()} loading={remove.isPending} aria-label={`Usuń ${title}`} icon={<Trash2 className="size-4" aria-hidden />} />
+          <div className="flex gap-4 text-sm">
+            <button type="button" className="min-h-10 text-ink-700 hover:underline" onClick={() => setEditingType(item.type)} aria-label={`Edytuj ${title}`}>Edytuj</button>
+            <button type="button" className="min-h-10 text-danger-700 hover:underline disabled:opacity-50" onClick={() => remove.mutate()} disabled={remove.isPending} aria-label={`Usuń ${title}`}>Usuń</button>
           </div>
         )}
       </header>
@@ -72,9 +68,12 @@ export function SuggestionCard({ eventId, position, item, editable }: Suggestion
       ) : item ? (
         <SuggestionDisplay item={item} />
       ) : editable ? (
-        <div className="grid grid-cols-2 gap-2">
-          <Button variant="secondary" onClick={() => setEditingType('URL')} icon={<Link2 className="size-4" aria-hidden />}>Link</Button>
-          <Button variant="secondary" onClick={() => setEditingType('DESCRIPTION')} icon={<PenLine className="size-4" aria-hidden />}>Opis</Button>
+        <div className="space-y-2">
+          <p className="text-sm text-ink-500">Puste. Dodaj:</p>
+          <div className="grid grid-cols-2 gap-2">
+            <Button variant="secondary" onClick={() => setEditingType('URL')}>Link</Button>
+            <Button variant="secondary" onClick={() => setEditingType('DESCRIPTION')}>Opis</Button>
+          </div>
         </div>
       ) : (
         <p className="text-sm text-ink-500">Nie dodano propozycji.</p>
@@ -114,7 +113,7 @@ function SuggestionEditor({ eventId, position, initialType, item, onDone }: Sugg
 
   return (
     <form noValidate onSubmit={form.handleSubmit((values) => save.mutate(values))} className="space-y-3">
-      <div role="radiogroup" aria-label="Rodzaj propozycji" className="grid grid-cols-2 gap-1 rounded-xl bg-cream-200/70 p-1">
+      <div role="radiogroup" aria-label="Rodzaj propozycji" className="grid grid-cols-2 border border-line-strong">
         {(['URL', 'DESCRIPTION'] as const).map((option) => (
           <button
             key={option}
@@ -122,7 +121,7 @@ function SuggestionEditor({ eventId, position, initialType, item, onDone }: Sugg
             role="radio"
             aria-checked={type === option}
             onClick={() => switchType(option)}
-            className={cn('min-h-10 rounded-lg text-sm font-semibold transition', type === option ? 'bg-white text-wine-700 shadow-sm' : 'text-ink-500')}
+            className={cn('min-h-10 text-sm transition-colors', type === option ? 'bg-ink-900 font-medium text-white' : 'text-ink-700 hover:bg-muted')}
           >
             {option === 'URL' ? 'Link do produktu' : 'Opis prezentu'}
           </button>
@@ -153,7 +152,7 @@ function SuggestionEditor({ eventId, position, initialType, item, onDone }: Sugg
       )}
       {save.isError && <Alert tone="error">{errorMessage(save.error)}</Alert>}
       <div className="flex gap-2">
-        <Button type="submit" loading={save.isPending} icon={<Plus className="size-4" aria-hidden />} className="flex-1">Zapisz</Button>
+        <Button type="submit" loading={save.isPending} className="flex-1">Zapisz</Button>
         <Button variant="ghost" onClick={() => onDone()}>Anuluj</Button>
       </div>
     </form>

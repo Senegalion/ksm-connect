@@ -1,54 +1,38 @@
 @import 'tailwindcss';
-@import '@fontsource-variable/fraunces';
-@import '@fontsource-variable/manrope';
+@import '@fontsource/ibm-plex-sans/400.css';
+@import '@fontsource/ibm-plex-sans/500.css';
+@import '@fontsource/ibm-plex-sans/600.css';
+@import '@fontsource/ibm-plex-sans/700.css';
+@import '@fontsource/ibm-plex-mono/500.css';
 
 @theme {
-  --font-sans: 'Manrope Variable', ui-sans-serif, system-ui, sans-serif;
-  --font-display: 'Fraunces Variable', ui-serif, Georgia, serif;
+  --font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
 
-  --color-cream-50: #fdfaf5;
-  --color-cream-100: #f6f1ea;
-  --color-cream-200: #ece3d6;
-  --color-cream-300: #ddd0bf;
+  --color-paper: #ffffff;
+  --color-muted: #f5f5f4;
+  --color-line: #e2e2e0;
+  --color-line-strong: #b9b9b6;
 
-  --color-ink-900: #2b2420;
-  --color-ink-700: #4a403a;
-  --color-ink-500: #6f645b;
-  --color-ink-300: #a89b90;
+  --color-ink-900: #141414;
+  --color-ink-700: #3b3b3b;
+  --color-ink-500: #646464;
+  --color-ink-300: #9c9c9c;
 
-  --color-wine-50: #f9eeec;
-  --color-wine-100: #f1d6d3;
-  --color-wine-600: #8f2a37;
-  --color-wine-700: #7a1f2b;
-  --color-wine-800: #611823;
+  --color-accent-50: #fdf0f0;
+  --color-accent-100: #f7d6d6;
+  --color-accent-600: #cf1f28;
+  --color-accent-700: #b3141c;
+  --color-accent-800: #8d0f15;
 
-  --color-pine-50: #e9f2ed;
-  --color-pine-600: #2a6049;
-  --color-pine-700: #1f4d3a;
+  --color-success-50: #edf6f0;
+  --color-success-700: #1c6a3b;
 
-  --color-gold-100: #f6ead2;
-  --color-gold-500: #c9963a;
-  --color-gold-700: #8a6420;
+  --color-warning-50: #fbf4e2;
+  --color-warning-700: #7d5300;
 
-  --color-danger-50: #fdecea;
+  --color-danger-50: #fdeceb;
   --color-danger-700: #a3261b;
-
-  --radius-card: 1.25rem;
-  --shadow-card: 0 1px 0 rgb(43 36 32 / 0.04), 0 8px 24px -12px rgb(43 36 32 / 0.12);
-
-  --animate-rise: rise 420ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-  --animate-reveal: reveal 700ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-
-  @keyframes rise {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  @keyframes reveal {
-    0% { opacity: 0; transform: scale(0.96) rotate(-1deg); }
-    60% { opacity: 1; transform: scale(1.01) rotate(0deg); }
-    100% { opacity: 1; transform: scale(1); }
-  }
 }
 
 @layer base {
@@ -58,18 +42,22 @@
   }
 
   body {
-    @apply bg-cream-100 font-sans text-ink-900 antialiased;
+    @apply bg-paper font-sans text-ink-900 antialiased;
     min-height: 100dvh;
+    font-feature-settings: 'tnum' 0;
   }
 
   h1, h2, h3 {
-    @apply font-display text-ink-900;
-    font-optical-sizing: auto;
-    letter-spacing: -0.01em;
+    @apply font-semibold text-ink-900;
+    letter-spacing: -0.015em;
+  }
+
+  a {
+    text-underline-offset: 3px;
   }
 
   :focus-visible {
-    @apply outline-2 outline-offset-2 outline-wine-600;
+    @apply outline-2 outline-offset-2 outline-ink-900;
   }
 
   @media (prefers-reduced-motion: reduce) {

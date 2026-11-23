@@ -1,6 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
-import { MailCheck } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router'
 import { CheckboxField } from '../../components/forms/CheckboxField'
@@ -30,18 +29,15 @@ export function RegisterForm() {
 
   if (register.isSuccess) {
     return (
-      <div className="space-y-4 text-center">
-        <div className="mx-auto flex size-14 items-center justify-center rounded-2xl bg-pine-50 text-pine-700">
-          <MailCheck className="size-7" aria-hidden />
-        </div>
-        <h2 className="text-xl font-semibold">Sprawdź swoją skrzynkę</h2>
+      <div className="space-y-4 border-t-2 border-ink-900 pt-5">
+        <h2 className="text-xl">Sprawdź swoją skrzynkę</h2>
         <p className="text-sm leading-relaxed text-ink-500">
           Wysłaliśmy wiadomość na adres <strong className="text-ink-900">{form.getValues('email')}</strong>. Kliknij link w wiadomości, aby potwierdzić konto. Link jest ważny przez 24 godziny.
         </p>
         <Button variant="secondary" fullWidth onClick={() => resend.mutate()} loading={resend.isPending} disabled={resend.isSuccess}>
           {resend.isSuccess ? 'Wysłano ponownie' : 'Nie dotarło? Wyślij ponownie'}
         </Button>
-        <Link to="/login" className="block text-sm font-semibold text-wine-700">Przejdź do logowania</Link>
+        <Link to="/login" className="block text-sm font-medium text-accent-700 hover:underline">Przejdź do logowania</Link>
       </div>
     )
   }
@@ -76,13 +72,13 @@ export function RegisterForm() {
         {...form.register('password')}
       />
       <CheckboxField
-        label={<>Zapoznałem(-am) się z <Link to="/privacy" target="_blank" className="font-semibold text-wine-700 underline underline-offset-4">informacją o przetwarzaniu danych osobowych</Link>.</>}
+        label={<>Zapoznałem(-am) się z <Link to="/privacy" target="_blank" className="font-semibold text-accent-700 underline underline-offset-4">informacją o przetwarzaniu danych osobowych</Link>.</>}
         error={errors.privacyNoticeAccepted?.message}
         {...form.register('privacyNoticeAccepted')}
       />
       <Button type="submit" fullWidth size="lg" loading={register.isPending}>Załóż konto</Button>
       <p className="text-center text-sm text-ink-500">
-        Masz już konto? <Link to="/login" className="font-semibold text-wine-700 underline-offset-4 hover:underline">Zaloguj się</Link>
+        Masz już konto? <Link to="/login" className="font-medium text-accent-700 underline-offset-4 hover:underline">Zaloguj się</Link>
       </p>
     </form>
   )

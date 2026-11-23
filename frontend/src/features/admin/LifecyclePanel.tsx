@@ -74,9 +74,9 @@ export function LifecyclePanel({ event }: { event: AdminEventView }) {
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl bg-cream-50 px-4 py-3">
-      <dt className="text-xs font-semibold text-ink-500">{label}</dt>
-      <dd className="font-display text-2xl font-semibold tabular-nums">{value}</dd>
+    <div className="border-l-2 border-line pl-3">
+      <dt className="text-[13px] text-ink-500">{label}</dt>
+      <dd className="font-mono text-2xl text-ink-900">{value}</dd>
     </div>
   )
 }

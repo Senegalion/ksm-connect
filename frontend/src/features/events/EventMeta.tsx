@@ -1,24 +1,23 @@
-import { CalendarDays, MapPin, Shuffle, Users } from 'lucide-react'
-import { formatDateTime } from '../../lib/time'
 import { pluralParticipants } from '../../lib/plural'
+import { formatDateTime } from '../../lib/time'
 import type { ParticipantEventView } from '../../types/api'
 
 export function EventMeta({ event }: { event: ParticipantEventView }) {
   const rows = [
-    event.startsAt && { icon: CalendarDays, label: formatDateTime(event.startsAt, event.timezone) },
-    event.location && { icon: MapPin, label: event.location },
-    { icon: Users, label: `${event.participantCount} ${pluralParticipants(event.participantCount)}` },
-    event.drawAt && event.status !== 'DRAW_COMPLETED' && { icon: Shuffle, label: `Losowanie: ${formatDateTime(event.drawAt, event.timezone)}` },
-  ].filter(Boolean) as Array<{ icon: typeof CalendarDays; label: string }>
+    event.startsAt && ['Termin', formatDateTime(event.startsAt, event.timezone)],
+    event.location && ['Miejsce', event.location],
+    ['Zapisani', `${event.participantCount} ${pluralParticipants(event.participantCount)}`],
+    event.drawAt && event.status !== 'DRAW_COMPLETED' && ['Losowanie', formatDateTime(event.drawAt, event.timezone)],
+  ].filter(Boolean) as Array<[string, string]>
 
   return (
-    <ul className="space-y-2 text-sm text-ink-700">
-      {rows.map(({ icon: Icon, label }) => (
-        <li key={label} className="flex items-start gap-2.5">
-          <Icon className="mt-0.5 size-4 shrink-0 text-wine-700" aria-hidden />
-          <span>{label}</span>
-        </li>
+    <dl className="grid grid-cols-[6.5rem_1fr] gap-x-3 gap-y-1.5 text-[15px]">
+      {rows.map(([label, value]) => (
+        <div key={label} className="contents">
+          <dt className="text-ink-500">{label}</dt>
+          <dd className="text-ink-900">{value}</dd>
+        </div>
       ))}
-    </ul>
+    </dl>
   )
 }

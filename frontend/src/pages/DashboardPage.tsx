@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query'
-import { CalendarHeart, QrCode } from 'lucide-react'
 import { Alert } from '../components/ui/Alert'
 import { ButtonLink } from '../components/ui/Button'
 import { EmptyState } from '../components/ui/EmptyState'
@@ -19,9 +18,9 @@ export function DashboardPage() {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="space-y-1">
           <p className="text-sm text-ink-500">Cześć, {user?.firstName}!</p>
-          <h1 className="text-3xl font-semibold">Twoje wydarzenia</h1>
+          <h1 className="text-3xl leading-tight">Twoje wydarzenia</h1>
         </div>
-        <ButtonLink to="/join" variant="secondary" icon={<QrCode className="size-4" aria-hidden />}>Dołącz kodem</ButtonLink>
+        <ButtonLink to="/join" variant="secondary">Dołącz kodem</ButtonLink>
       </div>
       {events.isPending ? (
         <PageLoader />
@@ -29,13 +28,12 @@ export function DashboardPage() {
         <Alert tone="error">{errorMessage(events.error)}</Alert>
       ) : events.data.length === 0 ? (
         <EmptyState
-          icon={<CalendarHeart className="size-6" aria-hidden />}
           title="Nie masz jeszcze wydarzeń"
           description="Poproś organizatora o kod zaproszenia albo zeskanuj kod QR aparatem w telefonie."
-          action={<ButtonLink to="/join" icon={<QrCode className="size-4" aria-hidden />}>Wpisz kod zaproszenia</ButtonLink>}
+          action={<ButtonLink to="/join">Wpisz kod zaproszenia</ButtonLink>}
         />
       ) : (
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-10 md:grid-cols-2 md:gap-x-10">
           {events.data.map((event) => <EventCard key={event.id} event={event} />)}
         </div>
       )}

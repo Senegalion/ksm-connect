@@ -1,11 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { ArrowLeft, Gift } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
 import { Alert } from '../components/ui/Alert'
 import { Badge } from '../components/ui/Badge'
 import { Button, ButtonLink } from '../components/ui/Button'
-import { Card, CardBody } from '../components/ui/Card'
 import { ConfirmDialog } from '../components/ui/ConfirmDialog'
 import { PageLoader } from '../components/ui/Spinner'
 import { EventMeta } from '../features/events/EventMeta'
@@ -43,35 +41,30 @@ export function EventPage() {
 
   return (
     <div className="space-y-8">
-      <Link to="/dashboard" className="inline-flex items-center gap-1.5 text-sm font-semibold text-ink-500 hover:text-wine-700">
-        <ArrowLeft className="size-4" aria-hidden />Wydarzenia
+      <Link to="/dashboard" className="inline-flex min-h-10 items-center gap-1.5 text-sm text-ink-500 hover:text-ink-900">
+        ← Wydarzenia
       </Link>
       <header className="space-y-4">
         <Badge tone={EVENT_STATUS_TONES[data.status]}>{EVENT_STATUS_LABELS[data.status]}</Badge>
-        <h1 className="text-3xl leading-tight font-semibold sm:text-4xl">{data.name}</h1>
+        <h1 className="text-3xl leading-tight sm:text-4xl">{data.name}</h1>
         {data.description && <p className="max-w-2xl leading-relaxed whitespace-pre-line text-ink-700">{data.description}</p>}
         <EventMeta event={data} />
       </header>
 
       {drawn && (
-        <Card className="animate-rise overflow-hidden border-wine-100">
-          <CardBody className="flex flex-col gap-4 bg-wine-50/60 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-3">
-              <span className="flex size-12 items-center justify-center rounded-2xl bg-wine-700 text-white"><Gift className="size-6" aria-hidden /></span>
-              <div>
-                <h2 className="text-xl font-semibold">Twoja osoba na Wigilię</h2>
-                <p className="text-sm text-ink-500">Losowanie zakończone – zobacz, komu przygotujesz prezent.</p>
-              </div>
-            </div>
-            <ButtonLink to={`/events/${eventId}/assignment`} size="lg">Zobacz</ButtonLink>
-          </CardBody>
-        </Card>
+        <section className="flex flex-col gap-4 border-t-4 border-accent-700 pt-5 sm:flex-row sm:items-end sm:justify-between">
+          <div className="space-y-1">
+            <h2 className="text-xl">Twoja osoba na Wigilię</h2>
+            <p className="text-[15px] text-ink-500">Losowanie zakończone. Zobacz, komu przygotujesz prezent.</p>
+          </div>
+          <ButtonLink to={`/events/${eventId}/assignment`} size="lg">Zobacz</ButtonLink>
+        </section>
       )}
 
       <WishlistEditor eventId={eventId} />
 
       {data.status === 'REGISTRATION_OPEN' && (
-        <div className="border-t border-cream-200 pt-6">
+        <div className="border-t border-line pt-6">
           <Button variant="ghost" onClick={() => setConfirmWithdraw(true)}>Zrezygnuj z udziału</Button>
           {withdraw.isError && <Alert tone="error" className="mt-3">{errorMessage(withdraw.error)}</Alert>}
         </div>

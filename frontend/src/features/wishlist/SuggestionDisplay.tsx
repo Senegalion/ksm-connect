@@ -1,4 +1,3 @@
-import { ExternalLink, PenLine } from 'lucide-react'
 import { displayHost, safeExternalUrl } from '../../lib/safeUrl'
 import type { WishlistItem } from '../../types/api'
 
@@ -9,24 +8,11 @@ export function SuggestionDisplay({ item }: { item: WishlistItem }) {
       return <p className="text-sm text-ink-500">Nieprawidłowy link</p>
     }
     return (
-      <a
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer nofollow"
-        className="group flex min-h-12 items-center gap-3 rounded-xl border border-cream-200 bg-cream-50 px-3.5 py-2.5 transition hover:border-wine-600/40 hover:bg-wine-50"
-      >
-        <ExternalLink className="size-4 shrink-0 text-wine-700" aria-hidden />
-        <span className="min-w-0 flex-1">
-          <span className="block text-sm font-semibold text-ink-900">{displayHost(href)}</span>
-          <span className="block truncate text-xs text-ink-500">{href}</span>
-        </span>
+      <a href={href} target="_blank" rel="noopener noreferrer nofollow" className="group block min-h-11">
+        <span className="block font-medium text-accent-700 group-hover:underline">{displayHost(href)} ↗</span>
+        <span className="block truncate text-[13px] text-ink-500">{href}</span>
       </a>
     )
   }
-  return (
-    <div className="flex gap-3 rounded-xl border border-cream-200 bg-cream-50 px-3.5 py-3">
-      <PenLine className="mt-0.5 size-4 shrink-0 text-wine-700" aria-hidden />
-      <p className="text-sm leading-relaxed break-words whitespace-pre-line text-ink-900">{item.description}</p>
-    </div>
-  )
+  return <p className="leading-relaxed break-words whitespace-pre-line text-ink-900">{item.description}</p>
 }

@@ -21,7 +21,7 @@ export function AuditPanel({ event }: { event: AdminEventView }) {
   if (audit.isPending) return <PageLoader />
   if (audit.isError || audit.data.length === 0) return <p className="text-sm text-ink-500">Brak wpisów.</p>
   return (
-    <ol className="space-y-2 border-l-2 border-cream-300 pl-4">
+    <ol className="space-y-2 border-l-2 border-line-strong pl-4">
       {audit.data.map((entry, index) => (
         <li key={`${entry.createdAt}-${index}`} className="text-sm">
           <p className="font-semibold">{LABELS[entry.type] ?? entry.type}</p>

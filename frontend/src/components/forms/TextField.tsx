@@ -2,9 +2,9 @@ import { useId, type InputHTMLAttributes, type ReactNode, type Ref, type Textare
 import { cn } from '../ui/cn'
 
 const CONTROL = cn(
-  'w-full rounded-xl border bg-white px-4 text-[16px] text-ink-900 placeholder:text-ink-300',
-  'transition-colors focus:border-wine-600 focus:outline-none focus:ring-4 focus:ring-wine-100',
-  'disabled:bg-cream-50 disabled:text-ink-500',
+  'w-full rounded-md border bg-paper px-4 text-[16px] text-ink-900 placeholder:text-ink-300',
+  'transition-colors focus:border-ink-900 focus:outline-none focus:ring-1 focus:ring-ink-900',
+  'disabled:bg-muted disabled:text-ink-500',
 )
 
 interface FieldShellProps {
@@ -18,7 +18,7 @@ interface FieldShellProps {
 function FieldShell({ label, error, hint, id, children }: FieldShellProps) {
   return (
     <div className="space-y-1.5">
-      <label htmlFor={id} className="block text-sm font-semibold text-ink-700">{label}</label>
+      <label htmlFor={id} className="block text-sm font-medium text-ink-900">{label}</label>
       {children}
       {error ? (
         <p id={`${id}-error`} className="text-sm text-danger-700">{error}</p>
@@ -46,7 +46,7 @@ export function TextField({ label, error, hint, id, className, ref, ...rest }: T
         id={fieldId}
         aria-invalid={error ? true : undefined}
         aria-describedby={error ? `${fieldId}-error` : hint ? `${fieldId}-hint` : undefined}
-        className={cn(CONTROL, 'min-h-12', error ? 'border-danger-700' : 'border-cream-300', className)}
+        className={cn(CONTROL, 'min-h-12', error ? 'border-danger-700' : 'border-line-strong', className)}
         {...rest}
       />
     </FieldShell>
@@ -70,7 +70,7 @@ export function TextAreaField({ label, error, hint, id, className, ref, ...rest 
         id={fieldId}
         aria-invalid={error ? true : undefined}
         aria-describedby={error ? `${fieldId}-error` : hint ? `${fieldId}-hint` : undefined}
-        className={cn(CONTROL, 'min-h-24 py-3 leading-relaxed', error ? 'border-danger-700' : 'border-cream-300', className)}
+        className={cn(CONTROL, 'min-h-24 py-3 leading-relaxed', error ? 'border-danger-700' : 'border-line-strong', className)}
         {...rest}
       />
     </FieldShell>

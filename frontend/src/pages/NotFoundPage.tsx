@@ -5,7 +5,7 @@ export function NotFoundPage() {
   return (
     <PublicLayout>
       <div className="space-y-4 py-16 text-center">
-        <p className="font-display text-6xl font-semibold text-wine-700">404</p>
+        <p className=" text-6xl font-semibold text-accent-700">404</p>
         <h1 className="text-2xl font-semibold">Nie znaleziono strony</h1>
         <ButtonLink to="/">Strona główna</ButtonLink>
       </div>
