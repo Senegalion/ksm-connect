@@ -3,7 +3,7 @@ targetScope = 'subscription'
 @description('Azure region for all regional resources.')
 param location string = 'polandcentral'
 
-@description('GitHub repository in owner/name form, used for OIDC federated credentials.')
+@description('GitHub repository in the OIDC subject form owner@ownerId/name@repositoryId, e.g. Senegalion@133698826/ksm-connect@1468039431. GitHub issues immutable-ID subjects, so renaming or re-creating the repository cannot reuse these credentials.')
 param githubRepository string
 
 @description('Object ID of the person running the deployment; receives Key Vault secret management rights.')

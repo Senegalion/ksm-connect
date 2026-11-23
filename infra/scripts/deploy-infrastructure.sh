@@ -24,7 +24,7 @@ if [[ -f "$infra_dir/prod.env" ]]; then
 fi
 : "${ALERT_EMAIL:?Set ALERT_EMAIL}"
 location="${LOCATION:-polandcentral}"
-repository="${GITHUB_REPOSITORY:-Senegalion/ksm-connect}"
+repository="${GITHUB_REPOSITORY:?Set GITHUB_REPOSITORY (owner@ownerId/name@repositoryId)}"
 
 az account show --query "{subscription:name, id:id}" -o table
 deployer_id="$(az ad signed-in-user show --query id -o tsv)"
