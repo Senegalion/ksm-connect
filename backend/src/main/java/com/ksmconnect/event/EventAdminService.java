@@ -40,7 +40,7 @@ public class EventAdminService {
 
     @Transactional
     public Event openRegistration(UUID eventId, UUID adminId) {
-        return changeStatus(eventId, adminId, Event::openRegistration);
+        return changeStatus(eventId, adminId, event -> event.openRegistration(clock.instant()));
     }
 
     @Transactional

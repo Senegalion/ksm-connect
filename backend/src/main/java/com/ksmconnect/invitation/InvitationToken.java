@@ -34,8 +34,8 @@ public class InvitationToken extends BaseEntity {
         this.expiresAt = expiresAt;
     }
 
-    boolean isValid(Instant now) {
-        return revokedAt == null && (expiresAt == null || expiresAt.isAfter(now));
+    boolean isActive() {
+        return revokedAt == null;
     }
 
     UUID getEventId() {

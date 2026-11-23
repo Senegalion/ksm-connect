@@ -176,6 +176,7 @@ class AdminEventController {
         return AdminEventView.of(event,
                 participantRepository.countByEventIdAndStatus(event.getId(), ParticipantStatus.ACTIVE),
                 drawOverdue,
+                event.registrationState(now),
                 invitationService.status(event.getId()),
                 notificationAdminService.summary(event.getId()));
     }

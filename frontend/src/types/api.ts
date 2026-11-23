@@ -17,6 +17,7 @@ export interface SessionView {
 export type EventStatus = 'DRAFT' | 'REGISTRATION_OPEN' | 'REGISTRATION_CLOSED' | 'DRAW_COMPLETED' | 'CANCELLED'
 export type DrawMode = 'MANUAL' | 'SCHEDULED'
 export type ParticipantStatus = 'ACTIVE' | 'WITHDRAWN'
+export type RegistrationState = 'NOT_STARTED' | 'OPEN' | 'CLOSED'
 
 export interface ParticipantEventView {
   id: string
@@ -32,6 +33,7 @@ export interface ParticipantEventView {
   wishlistDeadline?: string
   status: EventStatus
   participantCount: number
+  registrationState: RegistrationState
   participation?: {
     status: ParticipantStatus
     joinedAt: string
@@ -100,6 +102,7 @@ export interface AdminEventView {
   updatedAt: string
   activeParticipants: number
   drawOverdue: boolean
+  registrationState: RegistrationState
   invitation: InvitationStatus
   notifications: Record<NotificationStatus, number>
 }

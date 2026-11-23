@@ -48,13 +48,15 @@ public class ParticipantEventQueries {
         EventParticipant participant = participantRepository.findByEventIdAndUserId(eventId, userId)
                 .filter(EventParticipant::isActive)
                 .orElse(null);
-        return participant == null ? ParticipantEventView.of(event, activeCount(event), null) : view(event, participant);
+        return participant == null
+                ? ParticipantEventView.of(event, activeCount(event), event.registrationState(clock.instant()), null)
+                : view(event, participant);
     }
 
     private ParticipantEventView view(Event event, EventParticipant participant) {
         ParticipantEventView.Participation participation = new ParticipantEventView.Participation(
                 participant.getStatus(), participant.getJoinedAt(), event.isWishlistEditable(clock.instant()));
-        return ParticipantEventView.of(event, activeCount(event), participation);
+        return ParticipantEventView.of(event, activeCount(event), event.registrationState(clock.instant()), participation);
     }
 
     private long activeCount(Event event) {

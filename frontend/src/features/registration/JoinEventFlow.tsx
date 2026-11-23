@@ -10,6 +10,7 @@ import { useSession } from '../../hooks/useSession'
 import { errorMessage } from '../../lib/errors'
 import { clearPendingInvitation, invitationCodeFromHash, peekPendingInvitation, rememberPendingInvitation } from '../../lib/invitation'
 import { queryKeys } from '../../lib/queryKeys'
+import { formatDateTime } from '../../lib/time'
 import { eventService } from '../../services/eventService'
 import { EventMeta } from '../events/EventMeta'
 
@@ -124,8 +125,16 @@ export function JoinEventFlow() {
             {accept.isError && <Alert tone="error">{errorMessage(accept.error)}</Alert>}
             {event.participation ? (
               <ButtonLink to={`/events/${event.id}`} size="lg" fullWidth>Już jesteś zapisany(-a) – przejdź do wydarzenia</ButtonLink>
-            ) : (
+            ) : event.registrationState === 'OPEN' ? (
               <Button size="lg" fullWidth loading={accept.isPending} onClick={() => accept.mutate(code.trim())}>Dołączam!</Button>
+            ) : (
+              <Alert tone="info" title={event.registrationState === 'NOT_STARTED' ? 'Zapisy jeszcze nie ruszyły' : 'Zapisy są zamknięte'}>
+                {event.registrationState === 'NOT_STARTED'
+                  ? event.registrationOpensAt
+                    ? `Zapiszesz się od ${formatDateTime(event.registrationOpensAt, event.timezone)}. Zachowaj ten link.`
+                    : 'Organizator jeszcze nie otworzył zapisów. Spróbuj ponownie później.'
+                  : 'Na to wydarzenie nie można się już zapisać. Jeśli to pomyłka, skontaktuj się z organizatorem.'}
+              </Alert>
             )}
           </CardBody>
         </Card>

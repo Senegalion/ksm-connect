@@ -70,8 +70,15 @@ public class Event extends BaseEntity {
         apply(settings);
     }
 
-    public void openRegistration() {
+    public void openRegistration(Instant now) {
+        if (isRegistrationDeadlinePassed(now)) {
+            throw new ConflictException("REGISTRATION_DEADLINE_PASSED",
+                    "Registration deadline has already passed; change the event dates first");
+        }
         transitionTo(EventStatus.REGISTRATION_OPEN);
+        if (registrationOpensAt != null && registrationOpensAt.isAfter(now)) {
+            registrationOpensAt = now;
+        }
     }
 
     public void closeRegistration() {
@@ -89,9 +96,23 @@ public class Event extends BaseEntity {
     }
 
     public boolean acceptsRegistrations(Instant now) {
-        return status == EventStatus.REGISTRATION_OPEN
-                && (registrationOpensAt == null || !now.isBefore(registrationOpensAt))
-                && !isRegistrationDeadlinePassed(now);
+        return registrationState(now) == RegistrationState.OPEN;
+    }
+
+    public RegistrationState registrationState(Instant now) {
+        if (isRegistrationDeadlinePassed(now)) {
+            return RegistrationState.CLOSED;
+        }
+        if (status == EventStatus.DRAFT) {
+            return RegistrationState.NOT_STARTED;
+        }
+        if (status != EventStatus.REGISTRATION_OPEN) {
+            return RegistrationState.CLOSED;
+        }
+        if (registrationOpensAt != null && now.isBefore(registrationOpensAt)) {
+            return RegistrationState.NOT_STARTED;
+        }
+        return RegistrationState.OPEN;
     }
 
     public boolean isRegistrationDeadlinePassed(Instant now) {

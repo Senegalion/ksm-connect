@@ -20,6 +20,8 @@ const MESSAGES: Record<string, string> = {
   ACCOUNT_IN_COMPLETED_DRAW: 'Konto bierze udział w zakończonym losowaniu. Dane zostaną usunięte automatycznie po zakończeniu okresu przechowywania.',
   INVALID_INVITATION: 'Ten kod zaproszenia jest nieprawidłowy albo wygasł. Poproś organizatora o aktualny kod.',
   REGISTRATION_NOT_OPEN: 'Zapisy na to wydarzenie są zamknięte.',
+  REGISTRATION_NOT_STARTED: 'Zapisy na to wydarzenie jeszcze się nie rozpoczęły.',
+  REGISTRATION_DEADLINE_PASSED: 'Termin zamknięcia zapisów już minął. Zmień datę zamknięcia zapisów (lub losowania) w zakładce Ustawienia i spróbuj ponownie.',
   PARTICIPANT_LIMIT_REACHED: 'Osiągnięto limit uczestników tego wydarzenia.',
   PARTICIPATION_NOT_FOUND: 'Nie jesteś zapisany(-a) na to wydarzenie.',
   WITHDRAWAL_NOT_ALLOWED: 'Rezygnacja jest możliwa tylko w trakcie zapisów.',

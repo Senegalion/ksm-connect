@@ -167,7 +167,7 @@ class InvitationIT {
         TestApi.Session participant = api.participant("Spozniony");
         api.post(participant, "/api/invitations/accept", Map.of("code", draftCode))
                 .andExpect(status().isConflict())
-                .andExpect(jsonPath("$.code").value("REGISTRATION_NOT_OPEN"));
+                .andExpect(jsonPath("$.code").value("REGISTRATION_NOT_STARTED"));
 
         TestApi.EventScenario closed = api.closedEventWithParticipants(1);
         api.post(participant, "/api/invitations/accept", Map.of("code", closed.code()))
@@ -184,15 +184,73 @@ class InvitationIT {
     }
 
     @Test
-    void expiredRegistrationWindowRejectsJoin() throws Exception {
+    void openingAfterRegistrationDeadlineIsRejectedWithClearReason() throws Exception {
         TestApi.Session admin = api.admin();
         UUID eventId = api.createEvent(admin, Map.of(
                 "registrationOpensAt", Instant.now().minusSeconds(7200).toString(),
                 "registrationClosesAt", Instant.now().minusSeconds(60).toString()));
+        api.post(admin, "/api/admin/events/" + eventId + "/open-registration", null)
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.code").value("REGISTRATION_DEADLINE_PASSED"));
+        api.get(admin, "/api/admin/events/" + eventId)
+                .andExpect(jsonPath("$.status").value("DRAFT"))
+                .andExpect(jsonPath("$.registrationState").value("CLOSED"));
+    }
+
+    @Test
+    void openingBeforeConfiguredStartOpensRegistrationImmediately() throws Exception {
+        TestApi.Session admin = api.admin();
+        UUID eventId = api.createEvent(admin, Map.of(
+                "registrationOpensAt", Instant.now().plusSeconds(2 * 86_400).toString(),
+                "registrationClosesAt", Instant.now().plusSeconds(5 * 86_400).toString()));
         String code = api.openEventWithInvitation(admin, eventId);
-        api.post(api.participant("Spoznialski"), "/api/invitations/accept", Map.of("code", code))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.code").value("INVALID_INVITATION"));
+        api.get(admin, "/api/admin/events/" + eventId).andExpect(jsonPath("$.registrationState").value("OPEN"));
+        api.post(api.participant("Wczesny"), "/api/invitations/accept", Map.of("code", code))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.newlyJoined").value(true));
+    }
+
+    @Test
+    void closingAndReopeningRegistrationAllowsJoiningAgain() throws Exception {
+        TestApi.Session admin = api.admin();
+        UUID eventId = api.createEvent(admin, Map.of());
+        String code = api.openEventWithInvitation(admin, eventId);
+        api.closeRegistration(admin, eventId);
+        TestApi.Session late = api.participant("Ponowny");
+        api.post(late, "/api/invitations/accept", Map.of("code", code))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.code").value("REGISTRATION_NOT_OPEN"));
+        api.post(late, "/api/invitations/preview", Map.of("code", code))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.registrationState").value("CLOSED"));
+
+        api.post(admin, "/api/admin/events/" + eventId + "/open-registration", null).andExpect(status().isOk());
+        api.post(late, "/api/invitations/accept", Map.of("code", code))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.event.registrationState").value("OPEN"));
+    }
+
+    @Test
+    void registrationStartMovedIntoFutureAfterOpeningReportsNotStarted() throws Exception {
+        TestApi.Session admin = api.admin();
+        UUID eventId = api.createEvent(admin, Map.of());
+        String code = api.openEventWithInvitation(admin, eventId);
+        api.put(admin, "/api/admin/events/" + eventId, Map.of("name", "Przesunięte", "timezone", "Europe/Warsaw", "drawMode", "MANUAL",
+                "registrationOpensAt", Instant.now().plusSeconds(86_400).toString())).andExpect(status().isOk());
+        api.post(api.participant("Niecierpliwy"), "/api/invitations/accept", Map.of("code", code))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.code").value("REGISTRATION_NOT_STARTED"));
+    }
+
+    @Test
+    void invitationStaysValidWhenRegistrationDeadlineIsExtended() throws Exception {
+        TestApi.Session admin = api.admin();
+        UUID eventId = api.createEvent(admin, Map.of("registrationClosesAt", Instant.now().plusSeconds(3600).toString()));
+        String code = api.openEventWithInvitation(admin, eventId);
+        jdbc.sql("UPDATE events SET registration_closes_at = now() + interval '10 days' WHERE id = :id").param("id", eventId).update();
+        jdbc.sql("UPDATE invitation_tokens SET expires_at = now() - interval '1 minute' WHERE event_id = :id").param("id", eventId).update();
+        api.post(api.participant("Przedluzony"), "/api/invitations/accept", Map.of("code", code))
+                .andExpect(status().isOk());
     }
 
     @Test

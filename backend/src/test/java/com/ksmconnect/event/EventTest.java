@@ -25,7 +25,7 @@ class EventTest {
     @Test
     void followsHappyPathLifecycle() {
         Event event = event(manualSettings());
-        event.openRegistration();
+        event.openRegistration(NOW);
         event.closeRegistration();
         event.completeDraw(NOW);
         assertThat(event.getStatus()).isEqualTo(EventStatus.DRAW_COMPLETED);
@@ -35,17 +35,17 @@ class EventTest {
     @Test
     void cannotDrawBeforeRegistrationIsClosed() {
         Event event = event(manualSettings());
-        event.openRegistration();
+        event.openRegistration(NOW);
         assertThatThrownBy(() -> event.completeDraw(NOW)).isInstanceOf(ConflictException.class);
     }
 
     @Test
     void completedDrawIsTerminal() {
         Event event = event(manualSettings());
-        event.openRegistration();
+        event.openRegistration(NOW);
         event.closeRegistration();
         event.completeDraw(NOW);
-        assertThatThrownBy(event::openRegistration).isInstanceOf(ConflictException.class);
+        assertThatThrownBy(() -> event.openRegistration(NOW)).isInstanceOf(ConflictException.class);
         assertThatThrownBy(() -> event.cancel(NOW)).isInstanceOf(ConflictException.class);
         assertThatThrownBy(() -> event.completeDraw(NOW)).isInstanceOf(ConflictException.class);
         assertThatThrownBy(() -> event.reconfigure(manualSettings())).isInstanceOf(ConflictException.class);
@@ -54,9 +54,9 @@ class EventTest {
     @Test
     void registrationCanBeReopenedBeforeDraw() {
         Event event = event(manualSettings());
-        event.openRegistration();
+        event.openRegistration(NOW);
         event.closeRegistration();
-        event.openRegistration();
+        event.openRegistration(NOW);
         assertThat(event.getStatus()).isEqualTo(EventStatus.REGISTRATION_OPEN);
     }
 
@@ -79,21 +79,61 @@ class EventTest {
     void acceptsRegistrationsOnlyWithinWindow() {
         Event event = event(settings(NOW.minus(Duration.ofDays(1)), NOW.plus(Duration.ofDays(1)), DrawMode.MANUAL, null, null));
         assertThat(event.acceptsRegistrations(NOW)).isFalse();
-        event.openRegistration();
+        event.openRegistration(NOW);
         assertThat(event.acceptsRegistrations(NOW)).isTrue();
-        assertThat(event.acceptsRegistrations(NOW.minus(Duration.ofDays(2)))).isFalse();
+        assertThat(event.registrationState(NOW.minus(Duration.ofDays(2)))).isEqualTo(RegistrationState.NOT_STARTED);
         assertThat(event.acceptsRegistrations(NOW.plus(Duration.ofDays(1)))).isFalse();
     }
 
     @Test
     void scheduledDrawTimeEndsRegistration() {
         Event event = event(settings(null, null, DrawMode.SCHEDULED, NOW, null));
-        event.openRegistration();
+        event.openRegistration(NOW.minusSeconds(60));
         assertThat(event.acceptsRegistrations(NOW.minusSeconds(1))).isTrue();
         assertThat(event.acceptsRegistrations(NOW)).isFalse();
         assertThat(event.isRegistrationDeadlinePassed(NOW)).isTrue();
         assertThat(event.isScheduledDrawDue(NOW)).isTrue();
         assertThat(event.isScheduledDrawDue(NOW.minusSeconds(1))).isFalse();
+    }
+
+    @Test
+    void manualOpeningWithFutureStartOpensImmediately() {
+        Event event = event(settings(NOW.plus(Duration.ofDays(2)), NOW.plus(Duration.ofDays(5)), DrawMode.MANUAL, null, null));
+        assertThat(event.registrationState(NOW)).isEqualTo(RegistrationState.NOT_STARTED);
+        event.openRegistration(NOW);
+        assertThat(event.getRegistrationOpensAt()).isEqualTo(NOW);
+        assertThat(event.registrationState(NOW)).isEqualTo(RegistrationState.OPEN);
+        assertThat(event.acceptsRegistrations(NOW)).isTrue();
+    }
+
+    @Test
+    void reopeningAfterCloseAcceptsRegistrationsAgain() {
+        Event event = event(settings(null, NOW.plus(Duration.ofDays(1)), DrawMode.MANUAL, null, null));
+        event.openRegistration(NOW);
+        event.closeRegistration();
+        assertThat(event.registrationState(NOW)).isEqualTo(RegistrationState.CLOSED);
+        event.openRegistration(NOW);
+        assertThat(event.acceptsRegistrations(NOW)).isTrue();
+    }
+
+    @Test
+    void cannotOpenRegistrationAfterDeadline() {
+        Event event = event(settings(null, NOW.minusSeconds(60), DrawMode.MANUAL, null, null));
+        assertThatThrownBy(() -> event.openRegistration(NOW))
+                .isInstanceOf(ConflictException.class)
+                .extracting(exception -> ((ConflictException) exception).getCode())
+                .isEqualTo("REGISTRATION_DEADLINE_PASSED");
+        assertThat(event.getStatus()).isEqualTo(EventStatus.DRAFT);
+    }
+
+    @Test
+    void registrationStateReflectsLifecycle() {
+        Event event = event(manualSettings());
+        assertThat(event.registrationState(NOW)).isEqualTo(RegistrationState.NOT_STARTED);
+        event.openRegistration(NOW);
+        assertThat(event.registrationState(NOW)).isEqualTo(RegistrationState.OPEN);
+        event.cancel(NOW);
+        assertThat(event.registrationState(NOW)).isEqualTo(RegistrationState.CLOSED);
     }
 
     @Test
@@ -105,7 +145,7 @@ class EventTest {
     @Test
     void wishlistLocksAtDrawWhenNoDeadline() {
         Event event = event(manualSettings());
-        event.openRegistration();
+        event.openRegistration(NOW);
         event.closeRegistration();
         assertThat(event.isWishlistEditable(NOW)).isTrue();
         event.completeDraw(NOW);
@@ -115,7 +155,7 @@ class EventTest {
     @Test
     void wishlistDeadlineOverridesDrawLock() {
         Event event = event(settings(null, null, DrawMode.MANUAL, null, NOW.plus(Duration.ofDays(3))));
-        event.openRegistration();
+        event.openRegistration(NOW);
         event.closeRegistration();
         event.completeDraw(NOW);
         assertThat(event.isWishlistEditable(NOW)).isTrue();

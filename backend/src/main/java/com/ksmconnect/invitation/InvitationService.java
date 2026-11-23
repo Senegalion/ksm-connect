@@ -50,28 +50,25 @@ public class InvitationService {
         }
         repository.revokeActive(eventId, now);
         String canonical = tokenGenerator.fromAlphabet(InvitationCode.ALPHABET, InvitationCode.LENGTH);
-        InvitationToken token = repository.save(new InvitationToken(eventId, tokenHasher.hash(canonical), adminId,
-                event.getRegistrationClosesAt()));
+        InvitationToken token = repository.save(new InvitationToken(eventId, tokenHasher.hash(canonical), adminId, null));
         auditLog.record(AuditType.INVITATION_GENERATED, adminId, eventId, null);
         String code = InvitationCode.format(canonical);
-        return new GeneratedInvitation(code, properties.frontendBaseUrl() + "/join#" + code, token.getExpiresAt());
+        return new GeneratedInvitation(code, properties.frontendBaseUrl() + "/join#" + code, null);
     }
 
     @Transactional(readOnly = true)
     public InvitationStatus status(UUID eventId) {
         return repository.findByEventIdAndRevokedAtIsNull(eventId)
-                .map(token -> new InvitationStatus(true, token.getCreatedAt(), token.getExpiresAt(),
-                        token.isValid(clock.instant())))
+                .map(token -> new InvitationStatus(true, token.getCreatedAt(), null, token.isActive()))
                 .orElse(new InvitationStatus(false, null, null, false));
     }
 
     @Transactional(readOnly = true)
     public UUID resolveEventId(String rawCode) {
-        Instant now = clock.instant();
         return InvitationCode.canonicalize(rawCode)
                 .map(tokenHasher::hash)
                 .flatMap(repository::findByTokenHash)
-                .filter(token -> token.isValid(now))
+                .filter(InvitationToken::isActive)
                 .map(InvitationToken::getEventId)
                 .orElseThrow(() -> new NotFoundException("INVALID_INVITATION", "Invitation is invalid or expired"));
     }

@@ -8,6 +8,7 @@ import { ConfirmDialog } from '../../components/ui/ConfirmDialog'
 import { errorMessage } from '../../lib/errors'
 import { queryKeys } from '../../lib/queryKeys'
 import { EVENT_STATUS_LABELS, EVENT_STATUS_TONES } from '../../lib/statusLabels'
+import { formatDateTime } from '../../lib/time'
 import { adminService, type LifecycleAction } from '../../services/adminService'
 import type { AdminEventView } from '../../types/api'
 
@@ -45,6 +46,19 @@ export function LifecyclePanel({ event }: { event: AdminEventView }) {
           <Badge tone={EVENT_STATUS_TONES[event.status]}>{EVENT_STATUS_LABELS[event.status]}</Badge>
         </div>
         <p className="text-sm leading-relaxed text-ink-700">{DESCRIPTIONS[event.status]}</p>
+        {event.status === 'REGISTRATION_OPEN' && event.registrationState === 'NOT_STARTED' && (
+          <Alert tone="info" title="Zapisy jeszcze nie przyjmują uczestników">
+            Ustawiona data otwarcia to {formatDateTime(event.registrationOpensAt, event.timezone)}. Do tego czasu nikt nie może dołączyć. Zmień ją w Ustawieniach, jeśli chcesz otworzyć zapisy wcześniej.
+          </Alert>
+        )}
+        {event.status === 'REGISTRATION_OPEN' && event.registrationState === 'OPEN' && event.registrationClosesAt && (
+          <p className="text-sm text-ink-500">Zapisy zamkną się automatycznie {formatDateTime(event.registrationClosesAt, event.timezone)}.</p>
+        )}
+        {(event.status === 'DRAFT' || event.status === 'REGISTRATION_CLOSED') && event.registrationState === 'CLOSED' && (
+          <Alert tone="error" title="Termin zapisów już minął">
+            Aby otworzyć zapisy, najpierw przesuń datę zamknięcia zapisów (i ewentualnie losowania) w zakładce Ustawienia.
+          </Alert>
+        )}
         <dl className="grid grid-cols-2 gap-3">
           <Stat label="Uczestnicy" value={event.participantLimit ? `${event.activeParticipants}/${event.participantLimit}` : String(event.activeParticipants)} />
           <Stat label="Wysłane powiadomienia" value={`${event.notifications.SENT}`} />

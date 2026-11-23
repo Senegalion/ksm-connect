@@ -39,8 +39,11 @@ public class ParticipationService {
         if (existing != null && existing.isActive()) {
             return new JoinResult(existing, false);
         }
-        if (!event.acceptsRegistrations(now)) {
-            throw new ConflictException("REGISTRATION_NOT_OPEN", "Registration for this event is not open");
+        switch (event.registrationState(now)) {
+            case NOT_STARTED -> throw new ConflictException("REGISTRATION_NOT_STARTED", "Registration has not started yet");
+            case CLOSED -> throw new ConflictException("REGISTRATION_NOT_OPEN", "Registration for this event is not open");
+            case OPEN -> {
+            }
         }
         ensureCapacity(event);
         if (existing != null) {
