@@ -1,0 +1,85 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    uses: ./.github/workflows/ci.yml
+
+  deploy:
+    needs: verify
+    runs-on: ubuntu-24.04
+    environment:
+      name: production
+      url: ${{ vars.FRONTEND_BASE_URL }}
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      IMAGE: ${{ vars.ACR_LOGIN_SERVER }}/ksm-connect-backend:${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Azure login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Build and push backend image
+        run: |
+          az acr login --name "${{ vars.ACR_LOGIN_SERVER }}"
+          docker build -t "$IMAGE" backend
+          docker push "$IMAGE"
+      - name: Scan pushed image
+        uses: aquasecurity/trivy-action@0.33.1
+        with:
+          image-ref: ${{ env.IMAGE }}
+          severity: CRITICAL
+          ignore-unfixed: true
+          exit-code: '1'
+      - name: Deploy backend to Container Apps
+        run: |
+          az containerapp update \
+            --name "${{ vars.CONTAINER_APP_NAME }}" \
+            --resource-group "${{ vars.AZURE_RESOURCE_GROUP }}" \
+            --image "$IMAGE"
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Build frontend
+        working-directory: frontend
+        env:
+          VITE_API_BASE_URL: ${{ vars.API_BASE_URL }}
+        run: |
+          npm ci
+          npm run build
+      - name: Deploy frontend to Static Web Apps
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          action: upload
+          app_location: frontend/dist
+          skip_app_build: true
+          skip_api_build: true
+      - name: Smoke tests
+        run: |
+          for attempt in $(seq 1 30); do
+            if curl -fsS "${{ vars.API_BASE_URL }}/actuator/health/readiness" | grep -q '"UP"'; then break; fi
+            sleep 10
+          done
+          curl -fsS "${{ vars.API_BASE_URL }}/actuator/health/readiness" | grep -q '"UP"'
+          curl -fsS "${{ vars.API_BASE_URL }}/api/auth/session" | grep -q '"authenticated":false'
+          test "$(curl -s -o /dev/null -w '%{http_code}' "${{ vars.API_BASE_URL }}/api/admin/events")" = "401"
+          curl -fsS "${{ vars.FRONTEND_BASE_URL }}/" | grep -q 'KSM Connect'
