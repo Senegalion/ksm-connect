@@ -1,0 +1,23 @@
+Cześć [(${giverFirstName})]!
+
+Losowanie na Wigilię KSM dobiegło końca! 🎄
+
+Mamy dla Ciebie dobrą wiadomość – osoba, dla której przygotujesz świąteczny prezent, to:
+
+🎁 [(${recipientFullName})]
+
+Chcesz sprawdzić, jakie prezenty sprawiłyby jej szczególną radość?
+
+Zaloguj się do KSM Connect, aby zobaczyć jej listę prezentów:
+
+ZOBACZ SWOJĄ OSOBĘ I LISTĘ PREZENTÓW: [(${assignmentUrl})]
+
+Pamiętaj, że propozycje z listy są jedynie inspiracją – najważniejsza jest pamięć i radość z obdarowywania! ❤️
+
+Życzymy Ci udanych przygotowań, kreatywnego pomysłu na prezent i pięknej Wigilii KSM!
+
+Pozdrawiamy,
+Zespół KSM Connect
+[# th:if="${eventDate != null}"]
+[(${eventName})] – [(${eventDate})][/][# th:if="${eventLocation != null}"]
+[(${eventLocation})][/]

@@ -1,0 +1,20 @@
+springdoc:
+  api-docs:
+    enabled: ${API_DOCS_ENABLED:false}
+  swagger-ui:
+    enabled: ${API_DOCS_ENABLED:false}
+
+spring:
+  mail:
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
+ksm:
+  security:
+    session-cookie-secure: true
+    client-ip-header: ${CLIENT_IP_HEADER:CF-Connecting-IP}

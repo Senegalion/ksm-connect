@@ -1,0 +1,9 @@
+Cześć [(${firstName})]!
+
+Dziękujemy za założenie konta w KSM Connect. Potwierdź swój adres e-mail, aby móc dołączać do wydarzeń:
+
+[(${actionUrl})]
+
+Link jest ważny przez 24 godziny.
+
+Zespół KSM Connect

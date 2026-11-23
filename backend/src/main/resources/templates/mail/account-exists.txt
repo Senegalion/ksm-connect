@@ -1,0 +1,7 @@
+Cześć [(${firstName})]!
+
+Ktoś (być może Ty) próbował założyć nowe konto w KSM Connect na ten adres e-mail. Masz już konto – możesz się zalogować:
+
+[(${actionUrl})]
+
+Zespół KSM Connect
