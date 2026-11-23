@@ -5,19 +5,18 @@
 | Item | Status |
 |---|---|
 | All CI gates green on `main` (tests, Trivy, CodeQL, Dependency Review, E2E) | Pending first run on Azure |
-| TEST deploy, smoke, E2E and ZAP baseline green | Pending |
+| TEST environment | Deferred: removed because of the Container Apps environment quota; CI E2E against the release image replaces it for now |
 | ZAP findings triaged and recorded below | Pending |
-| Restore test executed on TEST and logged in backup-and-restore.md | Pending |
+| Restore test executed (restore PROD to a new temporary server, verify, delete) and logged in backup-and-restore.md | Pending |
 | Custom email domain with SPF, DKIM, DMARC passing | Pending (needs domain) |
 | Alert email received from the PROD action group | Pending |
 | Privacy notice reviewed by the KSM data controller | Pending |
 | `production` environment requires manual approval; `main` requires PRs and checks | Pending GitHub configuration |
 
-## Acceptance test in TEST (manual, synthetic accounts)
+## Acceptance test (manual)
 
-Use a phone and a laptop. Every account is `@e2e.ksm.local` or a personal test alias; emails appear in Mailpit.
+While there is no cloud TEST environment, run this checklist locally (`docker compose up`, emails in Mailpit at `localhost:8025`) on the release commit. After go-live, repeat the core flow once on PROD with a test event and personal aliases, then cancel the event.
 
-- [ ] The red "ŚRODOWISKO TESTOWE" banner is visible on every page.
 - [ ] Register on a phone; the verification email is in Mailpit; the link works and login succeeds.
 - [ ] Organizer creates an event, opens registration, generates the code and QR; the QR scanned with a phone opens the join page with the code filled in.
 - [ ] A participant joins via QR while logged out: after registering and logging in, the participant lands back on the join page.

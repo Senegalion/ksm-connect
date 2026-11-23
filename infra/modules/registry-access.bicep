@@ -7,7 +7,7 @@ resource registry 'Microsoft.ContainerRegistry/registries@2023-07-01' existing =
   name: registryName
 }
 
-resource pull 'Microsoft.Authorization/roleAssignments@2022-04-01' = [for principalId in pullPrincipalIds: {
+resource pull 'Microsoft.Authorization/roleAssignments@2022-04-01' = [for principalId in union(pullPrincipalIds, []): {
   name: guid(registry.id, principalId, 'acrpull')
   scope: registry
   properties: {

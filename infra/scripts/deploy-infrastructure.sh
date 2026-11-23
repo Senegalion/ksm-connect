@@ -4,7 +4,7 @@ set -euo pipefail
 usage() {
   echo "Usage: $0 <registry|environments> <what-if|apply> [image-reference]" >&2
   echo "Required env: ALERT_EMAIL. Optional: LOCATION (polandcentral), GITHUB_REPOSITORY (Senegalion/ksm-connect)," >&2
-  echo "TEST_CUSTOM_HOSTNAME, PROD_CUSTOM_HOSTNAME, PROD_EMAIL_SENDER_ADDRESS." >&2
+  echo "TEST_CUSTOM_HOSTNAME, PROD_CUSTOM_HOSTNAME, PROD_EMAIL_SENDER_ADDRESS, DEPLOY_TEST_ENVIRONMENT (false)." >&2
   exit 1
 }
 
@@ -60,7 +60,7 @@ TEST_MAILPIT="$(secret_or_new rg-ksm-test mailpit-ui-auth)" \
 PROD_PG="$(secret_or_new rg-ksm-prod database-password)" \
 PROD_PEPPER="$(secret_or_new rg-ksm-prod token-pepper)" \
 LOCATION_VALUE="$location" REPOSITORY_VALUE="$repository" DEPLOYER_VALUE="$deployer_id" \
-ALERT_VALUE="$ALERT_EMAIL" DEPLOY_ENVIRONMENTS="$deploy_environments" IMAGE_VALUE="$image" \
+ALERT_VALUE="$ALERT_EMAIL" DEPLOY_ENVIRONMENTS="$deploy_environments" IMAGE_VALUE="$image" DEPLOY_TEST="${DEPLOY_TEST_ENVIRONMENT:-false}" \
 TEST_HOST="${TEST_CUSTOM_HOSTNAME:-}" PROD_HOST="${PROD_CUSTOM_HOSTNAME:-}" PROD_SENDER="${PROD_EMAIL_SENDER_ADDRESS:-}" \
 python3 - "$parameters_file" <<'PYTHON'
 import json, os, sys
@@ -71,6 +71,7 @@ parameters = {
     "deployerObjectId": value("DEPLOYER_VALUE"),
     "alertEmail": value("ALERT_VALUE"),
     "deployEnvironments": {"value": os.environ["DEPLOY_ENVIRONMENTS"] == "true"},
+    "deployTestEnvironment": {"value": os.environ.get("DEPLOY_TEST", "false") == "true"},
     "backendImage": value("IMAGE_VALUE"),
     "testCustomHostname": value("TEST_HOST"),
     "prodCustomHostname": value("PROD_HOST"),

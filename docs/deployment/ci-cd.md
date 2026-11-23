@@ -1,5 +1,7 @@
 # CI/CD
 
+> **Current state:** the TEST stage is disabled while only PROD is provisioned (see [environments.md](environments.md)). The deploy workflow runs *verify → build → manual approval → PROD*. CI's Playwright suite runs against the same image before it is built for release. The TEST job (rollout, E2E against the cloud, ZAP baseline) can be restored from git history together with the TEST environment.
+
 ```mermaid
 flowchart LR
     pr[Pull request] --> ci
