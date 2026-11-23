@@ -16,10 +16,15 @@ image="${3:-}"
 [[ "$action" == "what-if" || "$action" == "apply" ]] || usage
 [[ "$stage" == "registry" || -n "$image" ]] || { echo "The environments stage needs an image reference." >&2; exit 1; }
 
+infra_dir="$(cd "$(dirname "$0")/.." && pwd)"
+if [[ -f "$infra_dir/prod.env" ]]; then
+  set -a
+  source "$infra_dir/prod.env"
+  set +a
+fi
 : "${ALERT_EMAIL:?Set ALERT_EMAIL}"
 location="${LOCATION:-polandcentral}"
-repository="${GITHUB_REPOSITORY:-Senegalion/ksm-connect}"
-infra_dir="$(cd "$(dirname "$0")/.." && pwd)"
+repository="${GITHUB_REPOSITORY:?Set GITHUB_REPOSITORY (owner@ownerId/name@repositoryId)}"
 
 az account show --query "{subscription:name, id:id}" -o table
 deployer_id="$(az ad signed-in-user show --query id -o tsv)"
@@ -62,6 +67,7 @@ PROD_PEPPER="$(secret_or_new rg-ksm-prod token-pepper)" \
 LOCATION_VALUE="$location" REPOSITORY_VALUE="$repository" DEPLOYER_VALUE="$deployer_id" \
 ALERT_VALUE="$ALERT_EMAIL" DEPLOY_ENVIRONMENTS="$deploy_environments" IMAGE_VALUE="$image" DEPLOY_TEST="${DEPLOY_TEST_ENVIRONMENT:-false}" \
 TEST_HOST="${TEST_CUSTOM_HOSTNAME:-}" PROD_HOST="${PROD_CUSTOM_HOSTNAME:-}" PROD_SENDER="${PROD_EMAIL_SENDER_ADDRESS:-}" \
+PROD_EMAIL_DOMAIN="${PROD_EMAIL_CUSTOM_DOMAIN:-}" PROD_DOMAINS="${PROD_CUSTOM_DOMAINS:-}" \
 python3 - "$parameters_file" <<'PYTHON'
 import json, os, sys
 value = lambda key: {"value": os.environ[key]}
@@ -76,6 +82,11 @@ parameters = {
     "testCustomHostname": value("TEST_HOST"),
     "prodCustomHostname": value("PROD_HOST"),
     "prodEmailSenderAddress": value("PROD_SENDER"),
+    "prodEmailCustomDomain": value("PROD_EMAIL_DOMAIN"),
+    "prodCustomDomains": {"value": [
+        {"hostname": item.split("=")[0], "certificateName": item.split("=")[1]}
+        for item in os.environ["PROD_DOMAINS"].split(",") if item
+    ]},
     "testPostgresPassword": value("TEST_PG"),
     "testTokenPepper": value("TEST_PEPPER"),
     "testMailpitPassword": value("TEST_MAILPIT"),
