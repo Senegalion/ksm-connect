@@ -22,7 +22,7 @@
         <bouncycastle.version>1.87</bouncycastle.version>
         <libphonenumber.version>9.0.44</libphonenumber.version>
         <bucket4j.version>8.23.0</bucket4j.version>
-        <jacoco.version>0.8.14</jacoco.version>
+        <jacoco.version>0.8.16</jacoco.version>
     </properties>
 
     <dependencies>
