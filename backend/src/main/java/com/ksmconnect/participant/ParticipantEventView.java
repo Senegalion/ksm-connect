@@ -26,7 +26,8 @@ public record ParticipantEventView(
         Participation participation
 ) {
 
-    public record Participation(ParticipantStatus status, Instant joinedAt, boolean wishlistEditable) {
+    public record Participation(ParticipantStatus status, Instant joinedAt, boolean wishlistEditable,
+                                boolean assignmentRevealed) {
     }
 
     public static ParticipantEventView of(Event event, long participantCount, RegistrationState registrationState,

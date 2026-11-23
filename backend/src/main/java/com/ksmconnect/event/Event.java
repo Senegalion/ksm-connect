@@ -128,10 +128,7 @@ public class Event extends BaseEntity {
         if (status == EventStatus.CANCELLED || personalDataPurgedAt != null) {
             return false;
         }
-        if (wishlistDeadline != null) {
-            return now.isBefore(wishlistDeadline);
-        }
-        return status != EventStatus.DRAW_COMPLETED;
+        return wishlistDeadline == null || now.isBefore(wishlistDeadline);
     }
 
     public boolean isDrawCompleted() {

@@ -49,9 +49,13 @@ export function EventPage() {
           <div className="pointer-events-none absolute -right-6 -bottom-12 size-36 rounded-full bg-ksm-red-600" aria-hidden />
           <div className="relative space-y-1">
             <h2 className="display-wide text-2xl text-ksm-blue-900 sm:text-3xl">Twoja osoba na Wigilię</h2>
-            <p className="text-[15px] font-medium">Losowanie zakończone. Twój los czeka na zdrapanie.</p>
+            <p className="text-[15px] font-medium">
+              {data.participation?.assignmentRevealed ? 'Sprawdź jej listę prezentów – może coś się zmieniło.' : 'Losowanie zakończone. Twój los czeka na zdrapanie.'}
+            </p>
           </div>
-          <ButtonLink to={`/events/${eventId}/assignment`} size="lg" className="relative">Zdrap swój los</ButtonLink>
+          <ButtonLink to={`/events/${eventId}/assignment`} size="lg" className="relative">
+            {data.participation?.assignmentRevealed ? 'Zobacz swoją osobę' : 'Zdrap swój los'}
+          </ButtonLink>
         </section>
       )}
 

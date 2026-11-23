@@ -71,7 +71,7 @@ export function EventForm({ initialValues, submitLabel, submitting, error, onSub
           <TextField
             label="Edycja list prezentów do (opcjonalnie)"
             type="datetime-local"
-            hint="Bez daty listy zamykają się w chwili losowania."
+            hint="Bez daty uczestnicy mogą zmieniać listy także po losowaniu."
             error={errors.wishlistDeadline?.message}
             {...form.register('wishlistDeadline')}
           />

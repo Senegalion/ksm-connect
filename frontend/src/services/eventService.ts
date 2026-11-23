@@ -19,4 +19,5 @@ export const eventService = {
   removeSuggestion: (eventId: string, position: number) =>
     api.delete<WishlistView>(`/api/events/${eventId}/wishlist/${position}`),
   assignment: (eventId: string) => api.get<AssignmentView>(`/api/events/${eventId}/assignment`),
+  markAssignmentRevealed: (eventId: string) => api.post<AssignmentView>(`/api/events/${eventId}/assignment/reveal`),
 }

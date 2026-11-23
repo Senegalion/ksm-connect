@@ -55,7 +55,8 @@ public class ParticipantEventQueries {
 
     private ParticipantEventView view(Event event, EventParticipant participant) {
         ParticipantEventView.Participation participation = new ParticipantEventView.Participation(
-                participant.getStatus(), participant.getJoinedAt(), event.isWishlistEditable(clock.instant()));
+                participant.getStatus(), participant.getJoinedAt(), event.isWishlistEditable(clock.instant()),
+                participant.isAssignmentRevealed());
         return ParticipantEventView.of(event, activeCount(event), event.registrationState(clock.instant()), participation);
     }
 

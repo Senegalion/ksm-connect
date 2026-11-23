@@ -91,7 +91,7 @@ class WishlistIT {
     }
 
     @Test
-    void wishlistLocksAfterDrawAndRecipientWishlistBecomesVisibleToGiverOnly() throws Exception {
+    void wishlistStaysEditableAfterDrawAndGiverSeesUpdates() throws Exception {
         TestApi.EventScenario scenario = api.openEventWithParticipants(2);
         TestApi.Session first = scenario.participants().get(0);
         TestApi.Session second = scenario.participants().get(1);
@@ -116,10 +116,30 @@ class WishlistIT {
                 .andExpect(jsonPath("$.recipient.firstName").value(first.firstName()))
                 .andExpect(jsonPath("$.recipient.wishlist.length()").value(0));
 
-        api.put(second, base + "/wishlist/3", Map.of("type", "DESCRIPTION", "description", "za późno"))
+        api.get(second, base + "/wishlist").andExpect(jsonPath("$.editable").value(true));
+        api.put(second, base + "/wishlist/3", Map.of("type", "DESCRIPTION", "description", "Dopisane po losowaniu"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.filledCount").value(3));
+        api.delete(second, base + "/wishlist/2").andExpect(status().isOk());
+        api.get(first, base + "/assignment")
+                .andExpect(jsonPath("$.recipient.wishlist.length()").value(2))
+                .andExpect(jsonPath("$.recipient.wishlist[1].description").value("Dopisane po losowaniu"));
+    }
+
+    @Test
+    void wishlistIsEditableAfterRegistrationClosesAndLocksOnlyAtConfiguredDeadline() throws Exception {
+        TestApi.EventScenario scenario = api.closedEventWithParticipants(2);
+        String base = "/api/events/" + scenario.eventId() + "/wishlist";
+        TestApi.Session participant = scenario.participants().getFirst();
+        api.put(participant, base + "/1", Map.of("type", "DESCRIPTION", "description", "Po zamknięciu zapisów"))
+                .andExpect(status().isOk());
+
+        jdbc.sql("UPDATE events SET wishlist_deadline = now() - interval '1 minute' WHERE id = :id")
+                .param("id", scenario.eventId()).update();
+        api.get(participant, base).andExpect(jsonPath("$.editable").value(false));
+        api.put(participant, base + "/2", Map.of("type", "DESCRIPTION", "description", "Za późno"))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.code").value("WISHLIST_LOCKED"));
-        api.get(second, base + "/wishlist").andExpect(jsonPath("$.editable").value(false));
     }
 
     @Test

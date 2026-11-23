@@ -1,7 +1,10 @@
 package com.ksmconnect.participant;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+
+import java.time.Instant;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,6 +19,10 @@ public interface EventParticipantRepository extends JpaRepository<EventParticipa
     List<EventParticipant> findByEventIdAndStatusOrderById(UUID eventId, ParticipantStatus status);
 
     long countByEventIdAndStatus(UUID eventId, ParticipantStatus status);
+
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query("update EventParticipant p set p.assignmentRevealedAt = :now where p.id = :participantId and p.assignmentRevealedAt is null")
+    int markAssignmentRevealed(UUID participantId, Instant now);
 
     @Query("""
             select new com.ksmconnect.participant.ParticipantSummary(

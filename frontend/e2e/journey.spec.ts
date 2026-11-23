@@ -94,6 +94,11 @@ test('complete Secret Santa journey from event creation to assignment reveal', a
     expect(recipient).not.toContain(participant.firstName)
     expect(mail).toContain(recipient)
     revealedNames.add(recipient)
+    await expect.poll(async () => (await participantPage.request.get(`/api/events/${eventId}/assignment`)).json().then((body: { revealed: boolean }) => body.revealed)).toBe(true)
+    await participantPage.reload()
+    await expect(participantPage.getByTestId('recipient-name')).toHaveText(recipient)
+    await expect(participantPage.getByRole('button', { name: 'Dotknij, aby odsłonić' })).toHaveCount(0)
+    await expect(participantPage.locator('canvas')).toHaveCount(0)
 
     if (recipient.startsWith('Anna')) {
       const link = participantPage.getByRole('link', { name: /example\.com/ })

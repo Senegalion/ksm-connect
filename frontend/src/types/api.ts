@@ -38,6 +38,7 @@ export interface ParticipantEventView {
     status: ParticipantStatus
     joinedAt: string
     wishlistEditable: boolean
+    assignmentRevealed: boolean
   }
 }
 
@@ -66,6 +67,7 @@ export interface WishlistView {
 export interface AssignmentView {
   eventStatus: EventStatus
   drawCompleted: boolean
+  revealed: boolean
   drawAt?: string
   recipient?: {
     firstName: string

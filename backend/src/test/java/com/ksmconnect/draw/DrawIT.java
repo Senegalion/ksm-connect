@@ -102,6 +102,25 @@ class DrawIT {
     }
 
     @Test
+    void revealIsRememberedPerParticipantOnlyAfterDraw() throws Exception {
+        TestApi.EventScenario scenario = api.closedEventWithParticipants(3);
+        TestApi.Session first = scenario.participants().get(0);
+        TestApi.Session second = scenario.participants().get(1);
+        String base = "/api/events/" + scenario.eventId() + "/assignment";
+
+        api.post(first, base + "/reveal", null).andExpect(status().isOk()).andExpect(jsonPath("$.revealed").value(false));
+        api.draw(scenario.admin(), scenario.eventId()).andExpect(status().isOk());
+
+        api.get(first, base).andExpect(jsonPath("$.revealed").value(false));
+        api.post(first, base + "/reveal", null).andExpect(status().isOk()).andExpect(jsonPath("$.revealed").value(true));
+        api.post(first, base + "/reveal", null).andExpect(jsonPath("$.revealed").value(true));
+        api.get(first, base).andExpect(jsonPath("$.revealed").value(true)).andExpect(jsonPath("$.recipient.firstName").exists());
+        api.get(second, base).andExpect(jsonPath("$.revealed").value(false));
+        api.post(api.participant("Obcy"), base + "/reveal", null).andExpect(status().isNotFound());
+        assertThat(assignmentRows(scenario.eventId())).hasSize(3);
+    }
+
+    @Test
     void secondDrawIsRejectedAndAssignmentsStayUnchanged() throws Exception {
         TestApi.EventScenario scenario = api.closedEventWithParticipants(4);
         api.draw(scenario.admin(), scenario.eventId()).andExpect(status().isOk());

@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { KsmStripe } from '../../components/layout/Brand'
 import { Alert } from '../../components/ui/Alert'
@@ -14,12 +14,24 @@ import { SuggestionDisplay } from '../wishlist/SuggestionDisplay'
 import { ScratchCard } from './ScratchCard'
 
 export function AssignmentReveal({ eventId, eventName, timezone }: { eventId: string; eventName: string; timezone: string }) {
-  const [revealed, setRevealed] = useState(false)
+  const [revealedNow, setRevealedNow] = useState(false)
+  const queryClient = useQueryClient()
   const assignment = useQuery({
     queryKey: queryKeys.assignment(eventId),
     queryFn: () => eventService.assignment(eventId),
     gcTime: 0,
   })
+  const rememberReveal = useMutation({
+    mutationFn: () => eventService.markAssignmentRevealed(eventId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.myEvent(eventId) })
+      queryClient.invalidateQueries({ queryKey: queryKeys.myEvents })
+    },
+  })
+  const reveal = () => {
+    setRevealedNow(true)
+    rememberReveal.mutate()
+  }
 
   if (assignment.isPending) {
     return <PageLoader />
@@ -28,6 +40,7 @@ export function AssignmentReveal({ eventId, eventName, timezone }: { eventId: st
     return <Alert tone="error">{errorMessage(assignment.error)}</Alert>
   }
   const { drawCompleted, recipient, drawAt } = assignment.data
+  const revealed = revealedNow || assignment.data.revealed
 
   if (!drawCompleted || !recipient) {
     return (
@@ -46,8 +59,8 @@ export function AssignmentReveal({ eventId, eventName, timezone }: { eventId: st
       </div>
 
       <div className="relative">
-        {revealed && <Confetti />}
-        <ScratchCard revealed={revealed} onReveal={() => setRevealed(true)}>
+        {revealedNow && <Confetti />}
+        <ScratchCard revealed={revealed} onReveal={reveal}>
           <div className="ticket-edges overflow-hidden rounded-2xl bg-ksm-blue-800 text-white select-none">
             <div className="flex items-stretch">
               <div className="flex w-14 shrink-0 items-center justify-center border-r-2 border-dashed border-white/25 bg-ksm-yellow-400 sm:w-20">
@@ -56,7 +69,7 @@ export function AssignmentReveal({ eventId, eventName, timezone }: { eventId: st
               <div className="min-w-0 flex-1 px-6 py-8 sm:px-10 sm:py-12">
                 <p className="text-sm font-semibold text-ksm-yellow-300">Przygotowujesz prezent dla</p>
                 <p
-                  className={`display-wide mt-3 text-[40px] leading-[0.95] break-words text-white sm:text-6xl ${revealed ? 'animate-pop-in' : ''}`}
+                  className={`display-wide mt-3 text-[40px] leading-[0.95] break-words text-white sm:text-6xl ${revealedNow ? 'animate-pop-in' : ''}`}
                   data-testid="recipient-name"
                 >
                   {recipient.firstName}{' '}
@@ -72,13 +85,13 @@ export function AssignmentReveal({ eventId, eventName, timezone }: { eventId: st
 
       {!revealed && (
         <div className="flex flex-col items-start gap-1">
-          <Button variant="secondary" onClick={() => setRevealed(true)}>Dotknij, aby odsłonić</Button>
+          <Button variant="secondary" onClick={reveal}>Dotknij, aby odsłonić</Button>
           <p className="text-[13px] text-ink-500">Albo zdrap los palcem. Nikt poza Tobą nie widzi tego wyniku.</p>
         </div>
       )}
 
       {revealed && (
-        <div className="animate-slide-up space-y-5" style={{ animationDelay: '250ms' }}>
+        <div className={revealedNow ? 'animate-slide-up space-y-5' : 'space-y-5'} style={revealedNow ? { animationDelay: '250ms' } : undefined}>
           <div className="flex items-end justify-between gap-4 border-b-2 border-ksm-blue-800 pb-3">
             <h2 className="text-2xl">Lista prezentów</h2>
             <span className="font-mono text-sm text-ink-500">{recipient.wishlist.length}/3</span>

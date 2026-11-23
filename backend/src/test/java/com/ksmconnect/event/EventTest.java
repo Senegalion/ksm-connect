@@ -143,13 +143,13 @@ class EventTest {
     }
 
     @Test
-    void wishlistLocksAtDrawWhenNoDeadline() {
+    void wishlistStaysEditableAfterCloseAndDrawWhenNoDeadline() {
         Event event = event(manualSettings());
         event.openRegistration(NOW);
         event.closeRegistration();
         assertThat(event.isWishlistEditable(NOW)).isTrue();
         event.completeDraw(NOW);
-        assertThat(event.isWishlistEditable(NOW)).isFalse();
+        assertThat(event.isWishlistEditable(NOW.plus(Duration.ofDays(30)))).isTrue();
     }
 
     @Test

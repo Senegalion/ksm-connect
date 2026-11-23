@@ -29,6 +29,8 @@ public class EventParticipant extends BaseEntity {
 
     private Instant withdrawnAt;
 
+    private Instant assignmentRevealedAt;
+
     protected EventParticipant() {
     }
 
@@ -48,6 +50,10 @@ public class EventParticipant extends BaseEntity {
         status = ParticipantStatus.ACTIVE;
         withdrawnAt = null;
         joinedAt = now;
+    }
+
+    public boolean isAssignmentRevealed() {
+        return assignmentRevealedAt != null;
     }
 
     public boolean isActive() {

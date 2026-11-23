@@ -26,7 +26,7 @@ export function EventCard({ event }: { event: ParticipantEventView }) {
       </div>
       <div className="relative mt-5 flex items-center justify-between gap-3 border-t border-line pt-4 text-[15px] font-semibold">
         <span className={drawn ? 'text-ksm-red-600' : 'text-ksm-blue-700'}>
-          {drawn ? 'Twój los czeka na zdrapanie' : 'Uzupełnij listę prezentów'}
+          {!drawn ? 'Uzupełnij listę prezentów' : event.participation?.assignmentRevealed ? 'Zobacz swoją osobę i jej listę' : 'Twój los czeka na zdrapanie'}
         </span>
         <span className="text-ksm-blue-700 transition-transform group-hover:translate-x-1" aria-hidden>→</span>
       </div>
