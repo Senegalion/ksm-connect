@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KSM Connect</title>
+</head>
+<body style="margin:0;padding:0;background:#eef3fc;font-family:Helvetica,Arial,sans-serif;color:#141414;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#eef3fc;padding:24px 12px;">
+<tr><td align="center">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;overflow:hidden;">
+<tr><td style="padding:22px 28px;background:#142f70;color:#ffffff;font-size:18px;font-weight:bold;">KSM <span style="color:#fdd20b;">Connect</span></td></tr>
+<tr><td style="padding:0;font-size:0;line-height:0;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td height="6" style="background:#fdd20b;"></td><td height="6" style="background:#d6232b;"></td><td height="6" style="background:#1b3f94;"></td></tr></table></td></tr>
+<tr><td style="padding:28px;font-size:16px;line-height:1.6;">
+<p>Cześć <span th:text="${firstName}"></span>!</p>
+<p>Ktoś (być może Ty) próbował założyć nowe konto w KSM Connect na ten adres e-mail. Masz już konto – możesz się po prostu zalogować.</p>
+<table role="presentation" cellpadding="0" cellspacing="0" style="margin:24px 0;"><tr><td style="border-radius:4px;background:#1b3f94;">
+<a th:href="${actionUrl}" style="display:inline-block;padding:14px 24px;color:#ffffff;text-decoration:none;font-weight:bold;font-size:16px;">Przejdź do logowania</a>
+</td></tr></table>
+<p style="font-size:13px;color:#646464;">Jeśli przycisk nie działa, skopiuj ten adres do przeglądarki:<br><span th:text="${actionUrl}" style="word-break:break-all;"></span></p>
+<p style="font-size:13px;color:#646464;">Nie pamiętasz hasła? Na stronie logowania wybierz „Nie pamiętam hasła”.</p>
+</td></tr>
+<tr><td style="padding:18px 28px;background:#eef3fc;color:#646464;font-size:12px;line-height:1.5;">Wiadomość wysłana automatycznie przez KSM Connect. Jeśli to nie Ty, możesz ją zignorować.</td></tr>
+</table>
+</td></tr>
+</table>
+</body>
+</html>

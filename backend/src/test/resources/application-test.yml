@@ -1,0 +1,21 @@
+ksm:
+  token-pepper: test-pepper-test-pepper-test-pepper-0123456789
+  frontend-base-url: https://app.test
+  security:
+    rate-limiting-enabled: false
+    cors-allowed-origins: https://app.test
+  scheduling:
+    enabled: false
+  notification:
+    max-attempts: 3
+    initial-backoff: 1s
+    max-backoff: 5s
+
+spring:
+  datasource:
+    hikari:
+      maximum-pool-size: 30
+
+logging:
+  level:
+    com.ksmconnect: INFO
