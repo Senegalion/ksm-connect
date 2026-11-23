@@ -1,1 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" fill="#b3141c"/><text x="32" y="41" font-family="Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#fff" text-anchor="middle">KSM</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="#1b3f94"/><circle cx="11" cy="12" r="6" fill="#fdd20b"/><path d="M17 6h9v20h-9z" fill="#ffffff"/><path d="M17 18h9v8h-9z" fill="#d6232b"/><path d="M6 21h9v5H6z" fill="#d6232b"/></svg>
