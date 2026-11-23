@@ -41,6 +41,7 @@ class RateLimiterTest {
                 new KsmProperties.Notification("KSM <a@b.c>", "none", "", "https://api.smsapi.pl", "", 8,
                         Duration.ofSeconds(30), Duration.ofHours(2), 20, Duration.ofMinutes(5)),
                 new KsmProperties.Scheduling(false),
-                new KsmProperties.Retention(90));
+                new KsmProperties.Retention(90),
+                new KsmProperties.Email("smtp", "", "", ""));
     }
 }

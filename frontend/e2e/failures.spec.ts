@@ -1,11 +1,8 @@
 import { expect, test } from '@playwright/test'
-import { apiAs, login, newUser, promoteToAdmin, registerAndVerify } from './support'
+import { apiAs, login, newUser, loginAsAdmin, registerAndVerify } from './support'
 
 test('invalid and revoked invitation codes are rejected with a clear message', async ({ page, browser }) => {
-  const admin = newUser('Admin')
-  await registerAndVerify(page, admin)
-  promoteToAdmin(admin.email)
-  await login(page, admin)
+  await loginAsAdmin(page)
 
   const api = await apiAs(page)
   const created = await (await api.post('/api/admin/events', { name: `Test kodów ${Date.now()}`, timezone: 'Europe/Warsaw', drawMode: 'MANUAL' })).json() as { id: string }
@@ -35,10 +32,7 @@ test('invalid and revoked invitation codes are rejected with a clear message', a
 })
 
 test('draw is blocked while registration is open and concurrent draw requests produce one result', async ({ page, browser }) => {
-  const admin = newUser('Losujacy')
-  await registerAndVerify(page, admin)
-  promoteToAdmin(admin.email)
-  await login(page, admin)
+  await loginAsAdmin(page)
   const api = await apiAs(page)
   const created = await (await api.post('/api/admin/events', { name: `Równoległe ${Date.now()}`, timezone: 'Europe/Warsaw', drawMode: 'MANUAL' })).json() as { id: string }
   await api.post(`/api/admin/events/${created.id}/open-registration`)

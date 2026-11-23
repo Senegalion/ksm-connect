@@ -168,4 +168,5 @@ export interface PublicInfo {
   privacyNoticeVersion: string
   defaultTimezone: string
   smsEnabled: boolean
+  environment: string
 }

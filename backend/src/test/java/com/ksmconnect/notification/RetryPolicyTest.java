@@ -32,6 +32,7 @@ class RetryPolicyTest {
                 new KsmProperties.Notification("KSM <a@b.c>", "none", "", "https://api.smsapi.pl", "", 8,
                         initial, max, 20, Duration.ofMinutes(5)),
                 new KsmProperties.Scheduling(false),
-                new KsmProperties.Retention(90));
+                new KsmProperties.Retention(90),
+                new KsmProperties.Email("smtp", "", "", ""));
     }
 }

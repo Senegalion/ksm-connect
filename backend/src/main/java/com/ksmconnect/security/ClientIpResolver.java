@@ -7,6 +7,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class ClientIpResolver {
 
+    private static final String FORWARDED_FOR = "X-Forwarded-For";
+
     private final String trustedHeader;
 
     public ClientIpResolver(KsmProperties properties) {
@@ -17,7 +19,9 @@ public class ClientIpResolver {
         if (!trustedHeader.isBlank()) {
             String headerValue = request.getHeader(trustedHeader);
             if (headerValue != null && !headerValue.isBlank()) {
-                return headerValue.split(",")[0].strip();
+                String[] hops = headerValue.split(",");
+                String candidate = FORWARDED_FOR.equalsIgnoreCase(trustedHeader) ? hops[hops.length - 1] : hops[0];
+                return candidate.strip();
             }
         }
         return request.getRemoteAddr();

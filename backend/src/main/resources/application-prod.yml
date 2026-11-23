@@ -1,3 +1,6 @@
+server:
+  forward-headers-strategy: native
+
 springdoc:
   api-docs:
     enabled: ${API_DOCS_ENABLED:false}
@@ -9,12 +12,17 @@ spring:
     properties:
       mail:
         smtp:
-          auth: true
+          auth: ${MAIL_SMTP_AUTH:true}
           starttls:
-            enable: true
-            required: true
+            enable: ${MAIL_STARTTLS:true}
+            required: ${MAIL_STARTTLS:true}
+
+logging:
+  structured:
+    format:
+      console: ecs
 
 ksm:
   security:
     session-cookie-secure: true
-    client-ip-header: ${CLIENT_IP_HEADER:CF-Connecting-IP}
+    client-ip-header: ${CLIENT_IP_HEADER:X-Forwarded-For}
