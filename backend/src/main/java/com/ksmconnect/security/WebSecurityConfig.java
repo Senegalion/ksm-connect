@@ -1,5 +1,6 @@
 package com.ksmconnect.security;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +21,21 @@ import java.time.Duration;
 @Configuration
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 class WebSecurityConfig {
+
+    private static final String[] BACKEND_PREFIXES = {"/api/", "/actuator", "/v3/", "/swagger-ui"};
+
+    static boolean isFrontendRequest(HttpServletRequest request) {
+        if (!HttpMethod.GET.matches(request.getMethod()) && !HttpMethod.HEAD.matches(request.getMethod())) {
+            return false;
+        }
+        String path = request.getRequestURI().substring(request.getContextPath().length());
+        for (String prefix : BACKEND_PREFIXES) {
+            if (path.startsWith(prefix)) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     private static final String[] PUBLIC_ENDPOINTS = {
             "/api/auth/csrf",
@@ -62,7 +78,7 @@ class WebSecurityConfig {
                         .deleteCookies(SessionCookieConfig.SESSION_COOKIE_NAME))
                 .headers(headers -> headers
                         .contentSecurityPolicy(csp -> csp.policyDirectives(
-                                "default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'"))
+                                "default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; manifest-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; object-src 'none'"))
                         .httpStrictTransportSecurity(hsts -> hsts
                                 .includeSubDomains(true)
                                 .maxAgeInSeconds(Duration.ofDays(365).toSeconds()))
@@ -80,6 +96,7 @@ class WebSecurityConfig {
                         .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
                         .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
                         .requestMatchers(DOCUMENTATION_ENDPOINTS).permitAll()
+                        .requestMatchers(WebSecurityConfig::isFrontendRequest).permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest().denyAll())

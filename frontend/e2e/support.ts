@@ -3,6 +3,12 @@ import { execFileSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 
 const MAILPIT_URL = process.env.MAILPIT_URL ?? 'http://localhost:8025'
+const MAILPIT_HEADERS: Record<string, string> = process.env.MAILPIT_USER && process.env.MAILPIT_PASSWORD
+  ? { Authorization: `Basic ${Buffer.from(`${process.env.MAILPIT_USER}:${process.env.MAILPIT_PASSWORD}`).toString('base64')}` }
+  : {}
+const REMOTE_ADMIN = process.env.E2E_ADMIN_EMAIL && process.env.E2E_ADMIN_PASSWORD
+  ? { email: process.env.E2E_ADMIN_EMAIL, password: process.env.E2E_ADMIN_PASSWORD }
+  : null
 const REPO_ROOT = fileURLToPath(new URL('../../', import.meta.url))
 export const PASSWORD = 'zimowa wigilia przy choince'
 
@@ -28,13 +34,13 @@ interface MailpitSummary {
 export async function waitForEmail(request: APIRequestContext, to: string, subjectFragment: string): Promise<string> {
   let body = ''
   await expect.poll(async () => {
-    const search = await request.get(`${MAILPIT_URL}/api/v1/search`, { params: { query: `to:"${to}"` } })
+    const search = await request.get(`${MAILPIT_URL}/api/v1/search`, { params: { query: `to:"${to}"` }, headers: MAILPIT_HEADERS })
     const { messages } = (await search.json()) as { messages: MailpitSummary[] }
     const match = messages.find((message) => message.Subject.includes(subjectFragment))
     if (!match) {
       return false
     }
-    const message = await request.get(`${MAILPIT_URL}/api/v1/message/${match.ID}`)
+    const message = await request.get(`${MAILPIT_URL}/api/v1/message/${match.ID}`, { headers: MAILPIT_HEADERS })
     body = ((await message.json()) as { Text: string }).Text
     return true
   }, { timeout: 30_000, intervals: [500, 1000, 2000] }).toBe(true)
@@ -65,10 +71,10 @@ export async function registerAndVerify(page: Page, user: TestUser) {
   await expect(page.getByText('Adres e-mail potwierdzony!')).toBeVisible()
 }
 
-export async function login(page: Page, user: TestUser) {
+export async function login(page: Page, user: TestUser, password = PASSWORD) {
   await page.goto('/login')
   await page.getByLabel('E-mail').fill(user.email)
-  await page.getByLabel('Hasło').fill(PASSWORD)
+  await page.getByLabel('Hasło').fill(password)
   await page.getByRole('button', { name: 'Zaloguj się' }).click()
   await expect(page).not.toHaveURL(/\/login/)
 }
@@ -76,6 +82,19 @@ export async function login(page: Page, user: TestUser) {
 export async function logout(page: Page) {
   await page.getByRole('button', { name: 'Wyloguj' }).click()
   await expect(page).toHaveURL(/\/login/)
+}
+
+export async function loginAsAdmin(page: Page): Promise<TestUser> {
+  if (REMOTE_ADMIN) {
+    const admin = { firstName: 'Admin', lastName: 'E2E', email: REMOTE_ADMIN.email }
+    await login(page, admin, REMOTE_ADMIN.password)
+    return admin
+  }
+  const admin = newUser('Organizator')
+  await registerAndVerify(page, admin)
+  promoteToAdmin(admin.email)
+  await login(page, admin)
+  return admin
 }
 
 export function promoteToAdmin(email: string) {

@@ -22,8 +22,17 @@ public record KsmProperties(
         @Valid @NotNull @DefaultValue Auth auth,
         @Valid @NotNull @DefaultValue Notification notification,
         @Valid @NotNull @DefaultValue Scheduling scheduling,
-        @Valid @NotNull @DefaultValue Retention retention
+        @Valid @NotNull @DefaultValue Retention retention,
+        @Valid @NotNull @DefaultValue Email email
 ) {
+
+    public record Email(
+            @DefaultValue("smtp") String provider,
+            @DefaultValue("") String acsEndpoint,
+            @DefaultValue("") String acsSenderAddress,
+            @DefaultValue("") String managedIdentityClientId
+    ) {
+    }
 
     public record Security(
             @DefaultValue("") String clientIpHeader,

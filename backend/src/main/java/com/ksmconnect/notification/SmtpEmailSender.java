@@ -3,6 +3,7 @@ package com.ksmconnect.notification;
 import com.ksmconnect.config.KsmProperties;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.mail.MailAuthenticationException;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailParseException;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 import java.nio.charset.StandardCharsets;
 
 @Component
+@ConditionalOnProperty(prefix = "ksm.email", name = "provider", havingValue = "smtp", matchIfMissing = true)
 class SmtpEmailSender implements EmailSender {
 
     private final JavaMailSender mailSender;

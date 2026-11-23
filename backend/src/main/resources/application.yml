@@ -111,6 +111,11 @@ ksm:
     retention-interval: PT6H
   retention:
     days-after-event: 90
+  email:
+    provider: ${EMAIL_PROVIDER:smtp}
+    acs-endpoint: ${ACS_ENDPOINT:}
+    acs-sender-address: ${ACS_SENDER_ADDRESS:}
+    managed-identity-client-id: ${AZURE_CLIENT_ID:}
 
 logging:
   level:

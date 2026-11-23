@@ -1,5 +1,5 @@
 import { expect, test, type Browser, type Page } from '@playwright/test'
-import { apiAs, expectNoHorizontalScroll, firstLink, login, logout, newUser, promoteToAdmin, registerAndVerify, waitForEmail, type TestUser } from './support'
+import { apiAs, expectNoHorizontalScroll, firstLink, login, logout, newUser, loginAsAdmin, registerAndVerify, waitForEmail, type TestUser } from './support'
 
 async function newParticipantPage(browser: Browser): Promise<Page> {
   const { viewport, userAgent, isMobile, hasTouch, deviceScaleFactor, locale, timezoneId, baseURL } = test.info().project.use
@@ -8,10 +8,7 @@ async function newParticipantPage(browser: Browser): Promise<Page> {
 }
 
 test('complete Secret Santa journey from event creation to assignment reveal', async ({ page, browser }) => {
-  const admin = newUser('Organizator')
-  await registerAndVerify(page, admin)
-  promoteToAdmin(admin.email)
-  await login(page, admin)
+  await loginAsAdmin(page)
 
   await page.goto('/admin')
   await page.getByRole('link', { name: 'Nowe wydarzenie' }).click()
