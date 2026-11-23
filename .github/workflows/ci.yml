@@ -107,8 +107,15 @@ jobs:
     needs: [backend, frontend]
     steps:
       - uses: actions/checkout@v7
-      - name: Build application image
-        run: docker build -t ksm-connect:${{ github.sha }} .
+      - uses: docker/setup-buildx-action@v4
+      - name: Build application image (cached layers)
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          load: true
+          tags: ksm-connect:${{ github.sha }}
+          cache-from: type=gha,scope=ksm-connect
+          cache-to: type=gha,scope=ksm-connect,mode=max
       - name: Scan application image
         uses: aquasecurity/trivy-action@v0.36.0
         with:

@@ -38,9 +38,19 @@ jobs:
         run: |
           digest="$(az acr repository show --name "${{ vars.ACR_NAME }}" --image "ksm-connect:${GITHUB_SHA}" --query digest -o tsv 2>/dev/null || true)"
           echo "digest=${digest}" >> "$GITHUB_OUTPUT"
-      - name: Build image
+      - uses: docker/setup-buildx-action@v4
         if: steps.existing.outputs.digest == ''
-        run: docker build --label "org.opencontainers.image.revision=${GITHUB_SHA}" -t "${{ vars.ACR_LOGIN_SERVER }}/ksm-connect:${GITHUB_SHA}" .
+      - name: Build image (cached layers)
+        if: steps.existing.outputs.digest == ''
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          load: true
+          tags: ${{ vars.ACR_LOGIN_SERVER }}/ksm-connect:${{ github.sha }}
+          labels: org.opencontainers.image.revision=${{ github.sha }}
+          provenance: false
+          cache-from: type=gha,scope=ksm-connect
+          cache-to: type=gha,scope=ksm-connect,mode=max
       - name: Scan image before publishing
         if: steps.existing.outputs.digest == ''
         uses: aquasecurity/trivy-action@v0.36.0
