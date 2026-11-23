@@ -100,7 +100,7 @@ Register in the PROD UI with a real address, confirm the email, then run:
 
 ```bash
 az containerapp exec -g rg-ksm-prod -n ksm-prod-app --command \
-  "env JAVA_TOOL_OPTIONS=-Xmx192m java org.springframework.boot.loader.launch.JarLauncher \
+  "env JAVA_TOOL_OPTIONS=-Xmx192m java -jar /app/ksm-connect.jar \
    --spring.main.web-application-type=none --ksm.scheduling.enabled=false \
    --ksm.tasks.promote-admin=organizer@example.com"
 ```

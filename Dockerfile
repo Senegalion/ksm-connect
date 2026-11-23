@@ -21,19 +21,16 @@ RUN mvn -B -q dependency:go-offline
 COPY backend/src ./src
 COPY --from=frontend /frontend/dist ./src/main/resources/static
 RUN mvn -B -q -DskipTests package \
-    && java -Djarmode=tools -jar target/ksm-connect.jar extract --layers --launcher --destination target/extracted
+    && java -Djarmode=tools -jar target/ksm-connect.jar extract --destination target/application
 
 FROM eclipse-temurin:25-jre-alpine
 RUN addgroup -S ksm && adduser -S -G ksm -H -s /sbin/nologin ksm
 WORKDIR /app
 COPY --from=agent --chown=ksm:ksm /agent/applicationinsights-agent.jar /app/agent/applicationinsights-agent.jar
-COPY --from=backend --chown=ksm:ksm /workspace/target/extracted/dependencies/ ./
-COPY --from=backend --chown=ksm:ksm /workspace/target/extracted/spring-boot-loader/ ./
-COPY --from=backend --chown=ksm:ksm /workspace/target/extracted/snapshot-dependencies/ ./
-COPY --from=backend --chown=ksm:ksm /workspace/target/extracted/application/ ./
+COPY --from=backend --chown=ksm:ksm /workspace/target/application/ ./
 USER ksm
 EXPOSE 8080
 ENV JAVA_TOOL_OPTIONS="-XX:MaxRAMPercentage=75 -XX:+ExitOnOutOfMemoryError"
 HEALTHCHECK --interval=15s --timeout=3s --start-period=60s --retries=5 \
   CMD wget -q -O /dev/null http://127.0.0.1:8080/actuator/health/liveness || exit 1
-ENTRYPOINT ["java", "org.springframework.boot.loader.launch.JarLauncher"]
+ENTRYPOINT ["java", "-jar", "/app/ksm-connect.jar"]
