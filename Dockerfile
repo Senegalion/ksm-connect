@@ -1,5 +1,3 @@
-# syntax=docker/dockerfile:1.7
-
 FROM node:24-alpine AS frontend
 WORKDIR /frontend
 COPY frontend/package.json frontend/package-lock.json ./
@@ -20,9 +18,12 @@ FROM eclipse-temurin:25-jre-alpine
 ARG APPLICATION_INSIGHTS_AGENT_VERSION=3.7.10
 RUN addgroup -S ksm && adduser -S -G ksm -H -s /sbin/nologin ksm
 WORKDIR /app
-ADD --chown=ksm:ksm --checksum=sha256:93a70c8f5d364c7e777f6c4d1b235dba91aef8448bd3fa94359f1d7f3e2eb0ec \
-    https://github.com/microsoft/ApplicationInsights-Java/releases/download/${APPLICATION_INSIGHTS_AGENT_VERSION}/applicationinsights-agent-${APPLICATION_INSIGHTS_AGENT_VERSION}.jar \
-    /app/agent/applicationinsights-agent.jar
+ARG APPLICATION_INSIGHTS_AGENT_SHA256=93a70c8f5d364c7e777f6c4d1b235dba91aef8448bd3fa94359f1d7f3e2eb0ec
+RUN mkdir -p /app/agent \
+    && wget -q -O /app/agent/applicationinsights-agent.jar \
+       "https://github.com/microsoft/ApplicationInsights-Java/releases/download/${APPLICATION_INSIGHTS_AGENT_VERSION}/applicationinsights-agent-${APPLICATION_INSIGHTS_AGENT_VERSION}.jar" \
+    && echo "${APPLICATION_INSIGHTS_AGENT_SHA256}  /app/agent/applicationinsights-agent.jar" | sha256sum -c - \
+    && chown -R ksm:ksm /app/agent
 COPY --from=backend --chown=ksm:ksm /workspace/target/extracted/dependencies/ ./
 COPY --from=backend --chown=ksm:ksm /workspace/target/extracted/spring-boot-loader/ ./
 COPY --from=backend --chown=ksm:ksm /workspace/target/extracted/snapshot-dependencies/ ./
