@@ -12,8 +12,11 @@ param deployerObjectId string
 @description('Email address that receives operational alerts.')
 param alertEmail string
 
-@description('Deploy the TEST and PROD environments. Set to false for the first, registry-only deployment.')
+@description('Deploy the application environments. Set to false for the first, registry-only deployment.')
 param deployEnvironments bool = true
+
+@description('Deploy the TEST environment. New subscriptions may allow only one Container Apps environment per region; enable once the quota allows it.')
+param deployTestEnvironment bool = false
 
 @description('Backend image reference, e.g. <registry>.azurecr.io/ksm-connect:<sha>.')
 param backendImage string = ''
@@ -44,7 +47,7 @@ resource sharedGroup 'Microsoft.Resources/resourceGroups@2024-03-01' = {
   tags: union(tags, { environment: 'shared' })
 }
 
-resource testGroup 'Microsoft.Resources/resourceGroups@2024-03-01' = {
+resource testGroup 'Microsoft.Resources/resourceGroups@2024-03-01' = if (deployTestEnvironment) {
   name: 'rg-ksm-test'
   location: location
   tags: union(tags, { environment: 'test' })
@@ -66,7 +69,7 @@ module shared 'modules/shared.bicep' = {
   }
 }
 
-module testIdentity 'modules/identity.bicep' = if (deployEnvironments) {
+module testIdentity 'modules/identity.bicep' = if (deployEnvironments && deployTestEnvironment) {
   scope: testGroup
   name: 'ksm-test-identity'
   params: {
@@ -92,13 +95,13 @@ module registryAccess 'modules/registry-access.bicep' = if (deployEnvironments) 
   params: {
     registryName: shared.outputs.registryName
     pullPrincipalIds: [
-      testIdentity!.outputs.principalId
+      deployTestEnvironment ? testIdentity!.outputs.principalId : prodIdentity!.outputs.principalId
       prodIdentity!.outputs.principalId
     ]
   }
 }
 
-module test 'modules/environment.bicep' = if (deployEnvironments) {
+module test 'modules/environment.bicep' = if (deployEnvironments && deployTestEnvironment) {
   scope: testGroup
   name: 'ksm-test'
   params: {
@@ -140,7 +143,7 @@ module prod 'modules/environment.bicep' = if (deployEnvironments) {
   dependsOn: [registryAccess]
 }
 
-module testDeployAccess 'modules/deploy-access.bicep' = {
+module testDeployAccess 'modules/deploy-access.bicep' = if (deployTestEnvironment) {
   scope: testGroup
   name: 'ksm-test-deploy-access'
   params: {
@@ -161,9 +164,9 @@ output registryName string = shared.outputs.registryName
 output githubBuildClientId string = shared.outputs.githubBuildClientId
 output githubTestClientId string = shared.outputs.githubTestClientId
 output githubProdClientId string = shared.outputs.githubProdClientId
-output testAppUrl string = deployEnvironments ? test!.outputs.appUrl : ''
-output testMailpitUrl string = deployEnvironments ? test!.outputs.mailpitUrl : ''
-output testContainerAppName string = deployEnvironments ? test!.outputs.containerAppName : ''
+output testAppUrl string = deployEnvironments && deployTestEnvironment ? test!.outputs.appUrl : ''
+output testMailpitUrl string = deployEnvironments && deployTestEnvironment ? test!.outputs.mailpitUrl : ''
+output testContainerAppName string = deployEnvironments && deployTestEnvironment ? test!.outputs.containerAppName : ''
 output prodAppUrl string = deployEnvironments ? prod!.outputs.appUrl : ''
 output prodContainerAppName string = deployEnvironments ? prod!.outputs.containerAppName : ''
 output prodEmailManagedDomain string = deployEnvironments ? prod!.outputs.emailManagedDomain : ''

@@ -1,5 +1,7 @@
 # Environments
 
+> **Current state (November 2026): only PROD is provisioned.** New Azure subscriptions are limited to one Container Apps environment per region (`ManagedEnvironmentCount = 1` in Poland Central), so the cloud TEST environment was removed to make room for PROD. TEST stays fully defined in Bicep behind `DEPLOY_TEST_ENVIRONMENT=true`. Re-enable it after the quota is raised through an Azure support request (Quotas → Container Apps → Managed Environment Count). Until then, pre-production verification is CI's E2E suite running against the exact image that is deployed, followed by approval-gated deployment and production smoke tests.
+
 | | LOCAL | TEST | PROD |
 |---|---|---|---|
 | Purpose | Development | Automated E2E, ZAP scan, acceptance testing | Real KSM participants |

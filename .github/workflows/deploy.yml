@@ -66,63 +66,8 @@ jobs:
           echo "### Image" >> "$GITHUB_STEP_SUMMARY"
           echo "\`${image}\` (commit \`${GITHUB_SHA}\`)" >> "$GITHUB_STEP_SUMMARY"
 
-  deploy-test:
-    needs: build
-    runs-on: ubuntu-24.04
-    environment:
-      name: test
-      url: ${{ vars.APP_URL }}
-    permissions:
-      contents: read
-      id-token: write
-    steps:
-      - uses: actions/checkout@v7
-      - name: Azure login (TEST deploy identity, OIDC)
-        uses: azure/login@v3
-        with:
-          client-id: ${{ vars.AZURE_CLIENT_ID }}
-          tenant-id: ${{ vars.AZURE_TENANT_ID }}
-          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
-      - name: Deploy image to TEST
-        run: ./infra/scripts/rollout.sh "${{ vars.RESOURCE_GROUP }}" "${{ vars.APP_NAME }}" "${{ needs.build.outputs.image }}"
-      - name: Smoke tests
-        run: ./infra/scripts/smoke-test.sh "${{ vars.APP_URL }}"
-      - uses: actions/setup-node@v7
-        with:
-          node-version: '24'
-          cache: npm
-          cache-dependency-path: frontend/package-lock.json
-      - name: Install Playwright
-        working-directory: frontend
-        run: |
-          npm ci
-          npx playwright install --with-deps chromium
-      - name: End-to-end tests against TEST
-        working-directory: frontend
-        env:
-          E2E_BASE_URL: ${{ vars.APP_URL }}
-          MAILPIT_URL: ${{ vars.MAILPIT_URL }}
-          MAILPIT_USER: ksm
-          MAILPIT_PASSWORD: ${{ secrets.MAILPIT_PASSWORD }}
-          E2E_ADMIN_EMAIL: ${{ secrets.E2E_ADMIN_EMAIL }}
-          E2E_ADMIN_PASSWORD: ${{ secrets.E2E_ADMIN_PASSWORD }}
-        run: npx playwright test --project=desktop --project=mobile-360
-      - name: Upload Playwright report
-        if: failure()
-        uses: actions/upload-artifact@v7
-        with:
-          name: playwright-report-test
-          path: frontend/playwright-report
-      - name: OWASP ZAP baseline (passive) scan of TEST
-        uses: zaproxy/action-baseline@v0.15.0
-        with:
-          target: ${{ vars.APP_URL }}
-          allow_issue_writing: false
-          fail_action: false
-          artifact_name: zap-baseline-test
-
   deploy-prod:
-    needs: [build, deploy-test]
+    needs: build
     runs-on: ubuntu-24.04
     environment:
       name: production
@@ -138,7 +83,7 @@ jobs:
           client-id: ${{ vars.AZURE_CLIENT_ID }}
           tenant-id: ${{ vars.AZURE_TENANT_ID }}
           subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
-      - name: Promote the image verified in TEST to PROD
+      - name: Deploy the image verified in CI to PROD
         run: ./infra/scripts/rollout.sh "${{ vars.RESOURCE_GROUP }}" "${{ vars.APP_NAME }}" "${{ needs.build.outputs.image }}"
       - name: Production smoke tests (read-only)
         run: ./infra/scripts/smoke-test.sh "${{ vars.APP_URL }}"
