@@ -18,6 +18,7 @@ jobs:
 
   build:
     needs: verify
+    if: vars.ACR_NAME != ''
     runs-on: ubuntu-24.04
     permissions:
       contents: read
