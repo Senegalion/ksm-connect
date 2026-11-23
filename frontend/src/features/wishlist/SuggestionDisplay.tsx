@@ -9,7 +9,7 @@ export function SuggestionDisplay({ item }: { item: WishlistItem }) {
     }
     return (
       <a href={href} target="_blank" rel="noopener noreferrer nofollow" className="group block min-h-11">
-        <span className="block font-medium text-accent-700 group-hover:underline">{displayHost(href)} ↗</span>
+        <span className="block font-medium text-ksm-blue-700 group-hover:underline">{displayHost(href)} ↗</span>
         <span className="block truncate text-[13px] text-ink-500">{href}</span>
       </a>
     )

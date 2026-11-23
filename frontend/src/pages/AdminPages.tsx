@@ -26,8 +26,8 @@ export function AdminEventsPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="space-y-1">
-          <p className="text-sm text-ink-500">Panel organizatora</p>
-          <h1 className="text-3xl leading-tight">Wydarzenia</h1>
+          <p className="text-[15px] font-semibold text-ksm-red-600">Panel organizatora</p>
+          <h1 className="display-wide text-4xl leading-[1]">Wydarzenia</h1>
         </div>
         <ButtonLink to="/admin/events/new">Nowe wydarzenie</ButtonLink>
       </div>
@@ -55,7 +55,7 @@ export function AdminCreateEventPage() {
   return (
     <div className="mx-auto max-w-3xl space-y-6">
       <BackLink to="/admin" label="Wydarzenia" />
-      <h1 className="text-3xl leading-tight">Nowe wydarzenie</h1>
+      <h1 className="display-wide text-4xl leading-[1]">Nowe wydarzenie</h1>
       <Card>
         <CardBody>
           <EventForm initialValues={emptyEventForm} submitLabel="Utwórz wydarzenie" submitting={create.isPending} error={create.error} onSubmit={(values) => create.mutate(toRequest(values))} />
@@ -95,7 +95,7 @@ export function AdminEventPage() {
   return (
     <div className="space-y-6">
       <BackLink to="/admin" label="Wydarzenia" />
-      <h1 className="text-3xl leading-tight">{data.name}</h1>
+      <h1 className="display-wide text-4xl leading-[1]">{data.name}</h1>
       <div role="tablist" aria-label="Sekcje wydarzenia" className="-mx-4 flex gap-6 overflow-x-auto border-b border-line px-4 md:mx-0 md:px-0">
         {TABS.map(({ id, label }) => (
           <button
@@ -104,7 +104,7 @@ export function AdminEventPage() {
             type="button"
             aria-selected={tab === id}
             onClick={() => setTab(id)}
-            className={cn('min-h-11 shrink-0 border-b-2 text-[15px] transition-colors', tab === id ? 'border-ink-900 font-medium text-ink-900' : 'border-transparent text-ink-500 hover:text-ink-900')}
+            className={cn('min-h-11 shrink-0 border-b-[3px] text-[15px] transition-colors', tab === id ? 'border-ksm-yellow-400 font-semibold text-ksm-blue-800' : 'border-transparent text-ink-500 hover:text-ksm-blue-800')}
           >
             {label}
           </button>

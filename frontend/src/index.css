@@ -1,55 +1,108 @@
 @import 'tailwindcss';
+@import '@fontsource-variable/archivo/wdth.css';
 @import '@fontsource/ibm-plex-sans/400.css';
 @import '@fontsource/ibm-plex-sans/500.css';
 @import '@fontsource/ibm-plex-sans/600.css';
-@import '@fontsource/ibm-plex-sans/700.css';
 @import '@fontsource/ibm-plex-mono/500.css';
 
 @theme {
   --font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Archivo Variable', 'IBM Plex Sans', ui-sans-serif, sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
 
   --color-paper: #ffffff;
-  --color-muted: #f5f5f4;
-  --color-line: #e2e2e0;
-  --color-line-strong: #b9b9b6;
+  --color-muted: #f4f6fb;
+  --color-line: #dfe4ee;
+  --color-line-strong: #aeb7c9;
 
-  --color-ink-900: #141414;
-  --color-ink-700: #3b3b3b;
-  --color-ink-500: #646464;
-  --color-ink-300: #9c9c9c;
+  --color-ink-900: #0f1b33;
+  --color-ink-700: #33405a;
+  --color-ink-500: #5d6880;
+  --color-ink-300: #98a1b5;
 
-  --color-accent-50: #fdf0f0;
-  --color-accent-100: #f7d6d6;
-  --color-accent-600: #cf1f28;
-  --color-accent-700: #b3141c;
-  --color-accent-800: #8d0f15;
+  --color-ksm-blue-50: #eef3fc;
+  --color-ksm-blue-100: #d7e2f7;
+  --color-ksm-blue-600: #2453b8;
+  --color-ksm-blue-700: #1b3f94;
+  --color-ksm-blue-800: #142f70;
+  --color-ksm-blue-900: #0c1d4a;
 
-  --color-success-50: #edf6f0;
-  --color-success-700: #1c6a3b;
+  --color-ksm-yellow-100: #fff5c7;
+  --color-ksm-yellow-300: #ffe266;
+  --color-ksm-yellow-400: #fdd20b;
+  --color-ksm-yellow-500: #f2bd00;
 
-  --color-warning-50: #fbf4e2;
-  --color-warning-700: #7d5300;
+  --color-ksm-red-50: #fdeced;
+  --color-ksm-red-500: #e7333a;
+  --color-ksm-red-600: #d6232b;
+  --color-ksm-red-700: #b8161d;
 
-  --color-danger-50: #fdeceb;
-  --color-danger-700: #a3261b;
+  --color-accent-50: #eef3fc;
+  --color-accent-100: #d7e2f7;
+  --color-accent-600: #2453b8;
+  --color-accent-700: #1b3f94;
+  --color-accent-800: #142f70;
+
+  --color-success-50: #e9f6ee;
+  --color-success-700: #17693a;
+
+  --color-warning-50: #fff5d6;
+  --color-warning-700: #7a5600;
+
+  --color-danger-50: #fdeced;
+  --color-danger-700: #b8161d;
+
+  --animate-pop-in: pop-in 520ms cubic-bezier(0.2, 0.9, 0.25, 1.2) both;
+  --animate-slide-up: slide-up 600ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  --animate-spin-slow: spin 28s linear infinite;
+  --animate-float: float 7s ease-in-out infinite;
+
+  @keyframes pop-in {
+    0% { opacity: 0; transform: scale(0.6) rotate(-8deg); }
+    100% { opacity: 1; transform: scale(1) rotate(0deg); }
+  }
+
+  @keyframes slide-up {
+    0% { opacity: 0; transform: translateY(24px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(3deg); }
+  }
+}
+
+@keyframes confetti-burst {
+  0% { opacity: 1; transform: translate(-50%, -50%) rotate(0deg) scale(0.4); }
+  70% { opacity: 1; }
+  100% { opacity: 0; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) rotate(var(--rot)) scale(1); }
 }
 
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
+    scroll-padding-top: 5.5rem;
+    scroll-padding-bottom: 5.5rem;
   }
 
   body {
     @apply bg-paper font-sans text-ink-900 antialiased;
     min-height: 100dvh;
-    font-feature-settings: 'tnum' 0;
   }
 
-  h1, h2, h3 {
-    @apply font-semibold text-ink-900;
-    letter-spacing: -0.015em;
+  h1, h2 {
+    @apply font-display text-ink-900;
+    font-weight: 800;
+    font-stretch: 115%;
+    letter-spacing: -0.02em;
+  }
+
+  h3 {
+    @apply font-display text-ink-900;
+    font-weight: 700;
+    font-stretch: 105%;
   }
 
   a {
@@ -57,13 +110,28 @@
   }
 
   :focus-visible {
-    @apply outline-2 outline-offset-2 outline-ink-900;
+    @apply outline-3 outline-offset-2 outline-ksm-yellow-400;
   }
 
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
       animation-duration: 1ms !important;
+      animation-iteration-count: 1 !important;
       transition-duration: 1ms !important;
     }
   }
+}
+
+@utility display-wide {
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 900;
+  letter-spacing: -0.025em;
+}
+
+@utility ticket-edges {
+  -webkit-mask: radial-gradient(circle 12px at 0 50%, #0000 98%, #000) left / 51% 100% no-repeat,
+    radial-gradient(circle 12px at 100% 50%, #0000 98%, #000) right / 51% 100% no-repeat;
+  mask: radial-gradient(circle 12px at 0 50%, #0000 98%, #000) left / 51% 100% no-repeat,
+    radial-gradient(circle 12px at 100% 50%, #0000 98%, #000) right / 51% 100% no-repeat;
 }

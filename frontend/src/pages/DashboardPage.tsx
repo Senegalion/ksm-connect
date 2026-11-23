@@ -17,8 +17,8 @@ export function DashboardPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="space-y-1">
-          <p className="text-sm text-ink-500">Cześć, {user?.firstName}!</p>
-          <h1 className="text-3xl leading-tight">Twoje wydarzenia</h1>
+          <p className="text-[15px] font-semibold text-ksm-red-600">Cześć, {user?.firstName}!</p>
+          <h1 className="display-wide text-4xl leading-[1] sm:text-5xl">Twoje wydarzenia</h1>
         </div>
         <ButtonLink to="/join" variant="secondary">Dołącz kodem</ButtonLink>
       </div>
@@ -33,7 +33,7 @@ export function DashboardPage() {
           action={<ButtonLink to="/join">Wpisz kod zaproszenia</ButtonLink>}
         />
       ) : (
-        <div className="grid gap-10 md:grid-cols-2 md:gap-x-10">
+        <div className="grid gap-5 md:grid-cols-2">
           {events.data.map((event) => <EventCard key={event.id} event={event} />)}
         </div>
       )}

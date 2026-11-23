@@ -2,15 +2,13 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
 import { Alert } from '../components/ui/Alert'
-import { Badge } from '../components/ui/Badge'
 import { Button, ButtonLink } from '../components/ui/Button'
 import { ConfirmDialog } from '../components/ui/ConfirmDialog'
 import { PageLoader } from '../components/ui/Spinner'
-import { EventMeta } from '../features/events/EventMeta'
+import { EventHero } from '../features/events/EventHero'
 import { WishlistEditor } from '../features/wishlist/WishlistEditor'
 import { errorMessage } from '../lib/errors'
 import { queryKeys } from '../lib/queryKeys'
-import { EVENT_STATUS_LABELS, EVENT_STATUS_TONES } from '../lib/statusLabels'
 import { eventService } from '../services/eventService'
 
 export function EventPage() {
@@ -41,23 +39,19 @@ export function EventPage() {
 
   return (
     <div className="space-y-8">
-      <Link to="/dashboard" className="inline-flex min-h-10 items-center gap-1.5 text-sm text-ink-500 hover:text-ink-900">
+      <Link to="/dashboard" className="inline-flex min-h-10 items-center gap-1.5 text-sm font-semibold text-ksm-blue-700 hover:underline">
         ← Wydarzenia
       </Link>
-      <header className="space-y-4">
-        <Badge tone={EVENT_STATUS_TONES[data.status]}>{EVENT_STATUS_LABELS[data.status]}</Badge>
-        <h1 className="text-3xl leading-tight sm:text-4xl">{data.name}</h1>
-        {data.description && <p className="max-w-2xl leading-relaxed whitespace-pre-line text-ink-700">{data.description}</p>}
-        <EventMeta event={data} />
-      </header>
+      <EventHero event={data} />
 
       {drawn && (
-        <section className="flex flex-col gap-4 border-t-4 border-accent-700 pt-5 sm:flex-row sm:items-end sm:justify-between">
-          <div className="space-y-1">
-            <h2 className="text-xl">Twoja osoba na Wigilię</h2>
-            <p className="text-[15px] text-ink-500">Losowanie zakończone. Zobacz, komu przygotujesz prezent.</p>
+        <section className="relative flex flex-col gap-4 overflow-hidden rounded-3xl bg-ksm-yellow-400 p-6 text-ksm-blue-900 sm:flex-row sm:items-center sm:justify-between sm:p-8">
+          <div className="pointer-events-none absolute -right-6 -bottom-12 size-36 rounded-full bg-ksm-red-600" aria-hidden />
+          <div className="relative space-y-1">
+            <h2 className="display-wide text-2xl text-ksm-blue-900 sm:text-3xl">Twoja osoba na Wigilię</h2>
+            <p className="text-[15px] font-medium">Losowanie zakończone. Twój los czeka na zdrapanie.</p>
           </div>
-          <ButtonLink to={`/events/${eventId}/assignment`} size="lg">Zobacz</ButtonLink>
+          <ButtonLink to={`/events/${eventId}/assignment`} size="lg" className="relative">Zdrap swój los</ButtonLink>
         </section>
       )}
 

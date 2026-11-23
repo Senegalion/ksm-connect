@@ -22,12 +22,16 @@ export function WishlistEditor({ eventId }: { eventId: string }) {
     <section aria-labelledby="wishlist-heading" className="space-y-4">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div className="space-y-1">
-          <h2 id="wishlist-heading" className="text-2xl">Moja lista prezentów</h2>
+          <h2 id="wishlist-heading" className="display-wide text-3xl">Moja lista prezentów</h2>
           <p className="text-sm text-ink-500">Dodaj do trzech propozycji – link do produktu albo krótki opis.</p>
         </div>
         <div className="flex items-center gap-2" aria-label={`Uzupełniono ${filledCount} z ${maxItems}`}>
-          <span className="font-mono text-sm text-ink-700">{filledCount}/{maxItems}</span>
-          <span className="text-sm text-ink-500">uzupełnione</span>
+          <div className="flex gap-1" aria-hidden>
+            {Array.from({ length: maxItems }, (_, index) => (
+              <span key={index} className={`h-2.5 w-8 rounded-full transition-colors duration-300 ${index < filledCount ? ['bg-ksm-yellow-400', 'bg-ksm-red-600', 'bg-ksm-blue-700'][index] : 'bg-line'}`} />
+            ))}
+          </div>
+          <span className="font-mono text-sm font-medium text-ink-700">{filledCount}/{maxItems}</span>
         </div>
       </div>
       {!editable && (
@@ -35,7 +39,7 @@ export function WishlistEditor({ eventId }: { eventId: string }) {
           Lista jest zamknięta. Nie można już wprowadzać zmian.
         </Alert>
       )}
-      <div className="grid gap-8 md:grid-cols-3 md:gap-6">
+      <div className="grid gap-4 md:grid-cols-3">
         {Array.from({ length: maxItems }, (_, index) => index + 1).map((position) => (
           <SuggestionCard key={position} eventId={eventId} position={position} item={byPosition.get(position)} editable={editable} />
         ))}

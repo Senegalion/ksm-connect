@@ -20,6 +20,8 @@ interface SuggestionCardProps {
   editable: boolean
 }
 
+const SLOT_COLORS = ['bg-ksm-yellow-400 text-ksm-blue-900', 'bg-ksm-red-600 text-white', 'bg-ksm-blue-700 text-white']
+
 export function SuggestionCard({ eventId, position, item, editable }: SuggestionCardProps) {
   const [editingType, setEditingType] = useState<SuggestionType | null>(null)
   const queryClient = useQueryClient()
@@ -35,11 +37,11 @@ export function SuggestionCard({ eventId, position, item, editable }: Suggestion
   return (
     <article
       aria-label={title}
-      className={cn('flex flex-col gap-3 border-t-2 pt-4', item ? 'border-ink-900' : 'border-line')}
+      className={cn('flex flex-col gap-4 rounded-2xl p-5 transition-colors', item ? 'bg-muted' : 'border-2 border-dashed border-line-strong')}
     >
-      <header className="flex items-baseline justify-between gap-2">
-        <h3 className="flex items-baseline gap-2 text-base">
-          <span className="font-mono text-sm text-ink-500">{String(position).padStart(2, '0')}</span>
+      <header className="flex items-center justify-between gap-2">
+        <h3 className="flex items-center gap-3 text-lg">
+          <span className={cn('display-wide flex size-10 items-center justify-center rounded-lg text-lg', item ? SLOT_COLORS[(position - 1) % SLOT_COLORS.length] : 'bg-line text-ink-500')} aria-hidden>{position}</span>
           {title}
         </h3>
         {item && editable && !editingType && (
@@ -69,7 +71,7 @@ export function SuggestionCard({ eventId, position, item, editable }: Suggestion
         <SuggestionDisplay item={item} />
       ) : editable ? (
         <div className="space-y-2">
-          <p className="text-sm text-ink-500">Puste. Dodaj:</p>
+          <p className="text-sm text-ink-500">Co sprawiłoby Ci radość?</p>
           <div className="grid grid-cols-2 gap-2">
             <Button variant="secondary" onClick={() => setEditingType('URL')}>Link</Button>
             <Button variant="secondary" onClick={() => setEditingType('DESCRIPTION')}>Opis</Button>
@@ -113,7 +115,7 @@ function SuggestionEditor({ eventId, position, initialType, item, onDone }: Sugg
 
   return (
     <form noValidate onSubmit={form.handleSubmit((values) => save.mutate(values))} className="space-y-3">
-      <div role="radiogroup" aria-label="Rodzaj propozycji" className="grid grid-cols-2 border border-line-strong">
+      <div role="radiogroup" aria-label="Rodzaj propozycji" className="grid grid-cols-2 gap-1 rounded-xl bg-line p-1">
         {(['URL', 'DESCRIPTION'] as const).map((option) => (
           <button
             key={option}
@@ -121,7 +123,7 @@ function SuggestionEditor({ eventId, position, initialType, item, onDone }: Sugg
             role="radio"
             aria-checked={type === option}
             onClick={() => switchType(option)}
-            className={cn('min-h-10 text-sm transition-colors', type === option ? 'bg-ink-900 font-medium text-white' : 'text-ink-700 hover:bg-muted')}
+            className={cn('min-h-10 rounded-lg text-sm font-semibold transition-colors', type === option ? 'bg-paper text-ksm-blue-800 shadow-sm' : 'text-ink-500 hover:text-ink-900')}
           >
             {option === 'URL' ? 'Link do produktu' : 'Opis prezentu'}
           </button>

@@ -77,7 +77,7 @@ Business rules live in the domain objects (`Event`, `NotificationOutbox`, `Sugge
 
 - **Backend:** Java 25, Spring Boot 4.1.3 (Web MVC, Security, Data JPA/Hibernate 7, Validation, Actuator, Scheduling, Mail, Session JDBC), Flyway, Thymeleaf (email templates), springdoc-openapi, Bucket4j, libphonenumber, BouncyCastle (Argon2), Maven.
 - **Tests:** JUnit 5, Mockito, AssertJ, Testcontainers (PostgreSQL 17), Spring Boot Test, Awaitility, JaCoCo; Vitest; Playwright.
-- **Frontend:** React 19, TypeScript 6, Vite 8, Tailwind CSS 4, React Router 8, TanStack Query 5, React Hook Form 7, Zod 4, qrcode, IBM Plex Sans and Mono (self-hosted via Fontsource).
+- **Frontend:** React 19, TypeScript 6, Vite 8, Tailwind CSS 4, React Router 8, TanStack Query 5, React Hook Form 7, Zod 4, qrcode, Archivo (display) and IBM Plex Sans/Mono, self-hosted via Fontsource.
 - **Database:** PostgreSQL 17.
 - **Infrastructure:** Docker, Docker Compose, Azure Container Apps, Azure Database for PostgreSQL Flexible Server, Azure Container Registry, Azure Key Vault, Azure Static Web Apps, Application Insights and Log Analytics, Cloudflare, GitHub Actions.
 

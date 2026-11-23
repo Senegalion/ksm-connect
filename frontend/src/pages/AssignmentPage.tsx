@@ -17,7 +17,7 @@ export function AssignmentPage() {
       <Link to={`/events/${eventId}`} className="inline-flex min-h-10 items-center gap-1.5 text-sm text-ink-500 hover:text-ink-900">
         ← {event.data.name}
       </Link>
-      <AssignmentReveal eventId={eventId} timezone={event.data.timezone} />
+      <AssignmentReveal eventId={eventId} eventName={event.data.name} timezone={event.data.timezone} />
     </div>
   )
 }

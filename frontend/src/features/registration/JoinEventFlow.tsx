@@ -5,6 +5,7 @@ import { TextField } from '../../components/forms/TextField'
 import { Alert } from '../../components/ui/Alert'
 import { Button, ButtonLink } from '../../components/ui/Button'
 import { Card, CardBody } from '../../components/ui/Card'
+import { Confetti } from '../../components/ui/Confetti'
 import { useSession } from '../../hooks/useSession'
 import { errorMessage } from '../../lib/errors'
 import { clearPendingInvitation, invitationCodeFromHash, peekPendingInvitation, rememberPendingInvitation } from '../../lib/invitation'
@@ -65,13 +66,17 @@ export function JoinEventFlow() {
   if (accept.isSuccess) {
     const { event, newlyJoined } = accept.data
     return (
-      <Card className="border-t-4 border-t-success-700">
-        <CardBody className="space-y-4">
-          <h2 className="text-2xl">{newlyJoined ? 'Jesteś zapisany(-a)!' : 'Już jesteś na liście'}</h2>
-          <p className="text-sm leading-relaxed text-ink-500">Dołączyłeś(-aś) do wydarzenia <strong className="text-ink-900">{event.name}</strong>. Teraz dodaj swoją listę prezentów, żeby Twój Mikołaj wiedział, co sprawi Ci radość.</p>
-          <ButtonLink to={`/events/${event.id}`} size="lg" fullWidth>Uzupełnij listę prezentów</ButtonLink>
-        </CardBody>
-      </Card>
+      <div className="relative">
+        {newlyJoined && <Confetti />}
+        <div className="relative animate-pop-in overflow-hidden rounded-3xl bg-ksm-yellow-400 p-6 text-ksm-blue-900 sm:p-8">
+          <div className="pointer-events-none absolute -right-10 -bottom-14 size-40 rounded-full bg-ksm-red-600" aria-hidden />
+          <div className="relative space-y-4">
+            <h2 className="display-wide text-3xl text-ksm-blue-900">{newlyJoined ? 'Jesteś zapisany(-a)!' : 'Już jesteś na liście'}</h2>
+            <p className="max-w-sm leading-relaxed font-medium">Dołączyłeś(-aś) do wydarzenia <strong>{event.name}</strong>. Teraz dodaj listę prezentów, żeby Twój Mikołaj wiedział, co sprawi Ci radość.</p>
+            <ButtonLink to={`/events/${event.id}`} size="lg">Uzupełnij listę prezentów</ButtonLink>
+          </div>
+        </div>
+      </div>
     )
   }
 

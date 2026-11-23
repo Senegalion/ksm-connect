@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { Alert } from '../../components/ui/Alert'
 import { Button } from '../../components/ui/Button'
 import { Card, CardBody } from '../../components/ui/Card'
+import { Confetti } from '../../components/ui/Confetti'
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog'
 import { errorMessage } from '../../lib/errors'
 import { queryKeys } from '../../lib/queryKeys'
@@ -23,7 +24,8 @@ export function DrawPanel({ event }: { event: AdminEventView }) {
   })
 
   return (
-    <Card>
+    <Card className="relative">
+      {draw.isSuccess && <Confetti spread={200} />}
       <CardBody className="space-y-4">
         <div className="flex items-center gap-2">
           
@@ -60,7 +62,7 @@ export function DrawPanel({ event }: { event: AdminEventView }) {
         )}
 
         {draw.isSuccess && (
-          <p className="flex items-center gap-2 text-sm font-semibold text-success-700">
+          <p className="rounded-xl bg-ksm-yellow-400 px-4 py-3 font-semibold text-ksm-blue-900">
             Wylosowano pary dla {draw.data.participantCount} osób. Powiadomienia są w drodze.
           </p>
         )}

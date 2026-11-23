@@ -2,7 +2,7 @@ import { pluralParticipants } from '../../lib/plural'
 import { formatDateTime } from '../../lib/time'
 import type { ParticipantEventView } from '../../types/api'
 
-export function EventMeta({ event }: { event: ParticipantEventView }) {
+export function EventMeta({ event, inverted = false }: { event: ParticipantEventView; inverted?: boolean }) {
   const rows = [
     event.startsAt && ['Termin', formatDateTime(event.startsAt, event.timezone)],
     event.location && ['Miejsce', event.location],
@@ -14,8 +14,8 @@ export function EventMeta({ event }: { event: ParticipantEventView }) {
     <dl className="grid grid-cols-[6.5rem_1fr] gap-x-3 gap-y-1.5 text-[15px]">
       {rows.map(([label, value]) => (
         <div key={label} className="contents">
-          <dt className="text-ink-500">{label}</dt>
-          <dd className="text-ink-900">{value}</dd>
+          <dt className={inverted ? 'text-ksm-yellow-300' : 'text-ink-500'}>{label}</dt>
+          <dd className={inverted ? 'font-medium text-white' : 'text-ink-900'}>{value}</dd>
         </div>
       ))}
     </dl>
