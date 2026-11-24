@@ -10,7 +10,7 @@
 | Restore test executed (restore PROD to a new temporary server, verify, delete) and logged in backup-and-restore.md | Pending |
 | Custom email domain with SPF, DKIM, DMARC passing | Pending (needs domain) |
 | Alert email received from the PROD action group | Pending |
-| Privacy notice reviewed by the KSM data controller | Pending |
+| Privacy notice reviewed by the KSM data controller | Draft label removed at the owner's request on 2026-11-24; formal review by the KSM board still recommended |
 | `production` environment requires manual approval; `main` requires PRs and checks | Pending GitHub configuration |
 
 ## Acceptance test (manual)
