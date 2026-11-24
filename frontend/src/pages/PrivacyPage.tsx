@@ -5,9 +5,6 @@ export function PrivacyPage() {
     <PublicLayout wide>
       <article className="mx-auto max-w-2xl space-y-5 leading-relaxed text-ink-700">
         <h1 className="text-3xl leading-tight">Informacja o przetwarzaniu danych osobowych</h1>
-        <p className="rounded-md bg-warning-50 px-4 py-3 text-sm text-warning-700">
-          Wersja robocza – treść wymaga weryfikacji przez administratora danych (zarząd KSM) przed uruchomieniem produkcyjnym.
-        </p>
         <section className="space-y-2">
           <h2 className="text-xl font-semibold">Jakie dane zbieramy</h2>
           <p>Imię, nazwisko, adres e-mail, numer telefonu, informacje o zapisach na wydarzenia oraz propozycje prezentów, które sam(-a) dodajesz.</p>
