@@ -30,6 +30,20 @@ class SuggestionContentTest {
     }
 
     @Test
+    void acceptsVeryLongShopLinksAndCleansTrackingParameters() throws java.io.IOException {
+        SuggestionContent content = SuggestionContent.of(SuggestionType.URL, TrackingParametersTest.empikFacebookLink(), null);
+        assertThat(content.url())
+                .startsWith("https://www.empik.com/zakreslacze-stabilo-boss-original-pastel-6-sztuk-stabilo,p1242414260")
+                .doesNotContain("utm_", "fbclid", "_branch_");
+    }
+
+    @Test
+    void acceptsLongLinksWithoutTrackingUpToLimit() {
+        String url = "https://example.com/" + "a".repeat(SuggestionContent.MAX_URL_LENGTH - "https://example.com/".length());
+        assertThat(SuggestionContent.of(SuggestionType.URL, url, null).url()).hasSize(SuggestionContent.MAX_URL_LENGTH);
+    }
+
+    @Test
     void rejectsOverlongLinks() {
         String url = "https://example.com/" + "a".repeat(SuggestionContent.MAX_URL_LENGTH);
         assertCode(() -> SuggestionContent.of(SuggestionType.URL, url, null), "INVALID_URL");
