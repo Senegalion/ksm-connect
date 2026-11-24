@@ -1,0 +1,1 @@
+ALTER TABLE gift_suggestions ALTER COLUMN url TYPE VARCHAR(8192);

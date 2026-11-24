@@ -9,7 +9,7 @@ import java.util.Set;
 
 record SuggestionContent(SuggestionType type, String url, String description) {
 
-    static final int MAX_URL_LENGTH = 2048;
+    static final int MAX_URL_LENGTH = 8192;
     static final int MAX_DESCRIPTION_LENGTH = 500;
     private static final Set<String> ALLOWED_SCHEMES = Set.of("http", "https");
 
@@ -44,7 +44,9 @@ record SuggestionContent(SuggestionType type, String url, String description) {
                     || uri.getRawUserInfo() != null || uri.isOpaque()) {
                 throw invalid("INVALID_URL");
             }
-            return candidate;
+            String cleaned = TrackingParameters.strip(candidate);
+            new URI(cleaned);
+            return cleaned;
         } catch (URISyntaxException exception) {
             throw invalid("INVALID_URL");
         }

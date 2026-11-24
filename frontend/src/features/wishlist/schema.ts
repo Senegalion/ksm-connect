@@ -7,7 +7,7 @@ export const suggestionSchema = z.discriminatedUnion('type', [
       .string()
       .trim()
       .min(1, 'Wklej link do produktu.')
-      .max(2048, 'Link jest za długi.')
+      .max(8192, 'Link jest za długi.')
       .refine((value) => {
         try {
           const url = new URL(value)

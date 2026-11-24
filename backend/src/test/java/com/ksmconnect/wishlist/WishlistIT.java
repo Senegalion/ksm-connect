@@ -51,6 +51,25 @@ class WishlistIT {
     }
 
     @Test
+    void acceptsVeryLongShopLinkAndStoresCleanedVersion() throws Exception {
+        TestApi.EventScenario scenario = api.openEventWithParticipants(1);
+        TestApi.Session participant = scenario.participants().getFirst();
+        String base = "/api/events/" + scenario.eventId() + "/wishlist";
+        String link = TrackingParametersTest.empikFacebookLink();
+
+        api.put(participant, base + "/1", Map.of("type", "URL", "url", link))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.items[0].url").value(
+                        "https://www.empik.com/zakreslacze-stabilo-boss-original-pastel-6-sztuk-stabilo,p1242414260,szkolne-i-papiernicze-p"
+                                + "?mpShopId=0&destinationUrl=product%2Fp1242414260&media_type=image"));
+
+        String longClean = "https://example.com/" + "x".repeat(6000);
+        api.put(participant, base + "/2", Map.of("type", "URL", "url", longClean))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.items[1].url").value(longClean));
+    }
+
+    @Test
     void rejectsInvalidPositionsAndUnsafeContent() throws Exception {
         TestApi.EventScenario scenario = api.openEventWithParticipants(1);
         TestApi.Session participant = scenario.participants().getFirst();

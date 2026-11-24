@@ -6,6 +6,10 @@ describe('suggestionSchema', () => {
     expect(suggestionSchema.safeParse({ type: 'URL', url: 'https://example.com/gra' }).success).toBe(true)
   })
 
+  it('accepts very long shop links', () => {
+    expect(suggestionSchema.safeParse({ type: 'URL', url: `https://example.com/${'a'.repeat(5000)}` }).success).toBe(true)
+  })
+
   it.each(['javascript:alert(1)', 'data:text/html,x', 'example.com', 'https://user:pass@example.com'])('rejects %s', (url) => {
     expect(suggestionSchema.safeParse({ type: 'URL', url }).success).toBe(false)
   })
