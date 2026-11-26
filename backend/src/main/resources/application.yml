@@ -54,6 +54,8 @@ server:
   port: ${PORT:8080}
   shutdown: graceful
   forward-headers-strategy: framework
+  tomcat:
+    max-locale-count: 100
   error:
     include-message: never
     include-stacktrace: never
